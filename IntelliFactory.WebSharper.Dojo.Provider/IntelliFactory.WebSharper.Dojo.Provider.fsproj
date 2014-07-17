@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>ef4a245f-14f1-418a-ab92-e9658ddbee72</ProjectGuid>
+    <Name>IntelliFactory.WebSharper.Dojo.Provider</Name>
+    <WebSharperProject>Library</WebSharperProject>
+    <OutputPath>../build/net40</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <Import Project="../build/net40/$(Name).proj" />
+  <Import Project="../msbuild/FSharp.targets" />
+  <Target Name="Build" />
+  <Target Name="Clean" />
+  <ItemGroup>
+    <Compile Include="ProvidedTypes.fsi" />
+    <Compile Include="ProvidedTypes.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="Provider.fs" />
+  </ItemGroup>
+</Project>

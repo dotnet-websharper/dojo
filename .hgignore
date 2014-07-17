@@ -1,0 +1,8 @@
+^dojo-release-.*/
+^js-doc-parse/
+(bin|obj)/(Debug|Release)
+^build/
+^packages/
+^tools/packages/
+\.suo$
+^.temp/
