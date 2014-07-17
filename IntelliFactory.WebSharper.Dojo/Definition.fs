@@ -301,8 +301,8 @@ module Definition =
         let classes =
             DetailsFile.rootElements
             |> List.map (fun e ->
-                let name = e.Name.Replace("/", ".")
-                name, (e, Class name))
+                let name = e.Name
+                name, (e, Class (name.Replace("/", "."))))
         let definedClasses = Map classes
         classes
         |> List.map (fun (_, (e, c)) ->
