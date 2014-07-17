@@ -114,7 +114,7 @@ module DetailsFile =
         | _ -> false
 
     let getParams name o =
-        List.assoc "parameters" o
+        defaultArg (List.tryAssoc "parameters" o) (Json.Array [])
         |> Json.asArray
         |> List.map (function
             | Json.Object p ->
@@ -135,22 +135,29 @@ module DetailsFile =
             defaultArg (List.tryAssoc "methods" props) (Json.Array [])
             |> Json.asArray
             |> List.partition (Json.asObject >> fun o ->
-                List.assoc "name" o |> Json.asString = "constructor"
-                (*&& List.assoc "returnTypes" o |> Json.asArray = [Json.String "object"]*))
+                List.assoc "name" o |> Json.asString = "constructor")
         let ctor =
             match ctors with
             | [] -> None
-            | [Json.Object o] -> Some (getParams name o)
-            | _ -> fail "Several constructors"
+            | [Json.Object o] ->
+                match List.assoc "returnTypes" o |> Json.asArray with
+                | [Json.String "object"] | [] ->
+                    Some (getParams name o)
+                | _ -> None
+            | _ -> fail "Several constructors in %s" name
         {
             Properties =
                 defaultArg (List.tryAssoc "properties" props) (Json.Array [])
                 |> Json.asArray
                 |> List.filter (not << isPrivate)
                 |> List.map (Json.asObject >> fun o ->
+                    let name = List.assoc "name" o |> Json.asString
                     {
-                        Name = List.assoc "name" o |> Json.asString
-                        Type = List.assoc "types" o |> typeOfArr
+                        Name = name
+                        Type =
+                            match List.assoc "types" o |> typeOfArr with
+                            | "object" -> name + "." + name
+                            | t -> t
                     })
             Methods =
                 methods
@@ -170,7 +177,7 @@ module DetailsFile =
 
     let getRootElementType name props =
         match List.tryAssoc "type" props |> Option.map Json.asString with
-        | Some "object" ->
+        | Some "instance" | Some "object" ->
             getMembers name props
             |> Object
             |> Some
@@ -183,20 +190,15 @@ module DetailsFile =
             }
             |> Some
         | Some "undefined" -> Some Unknown
-        | Some "instance" -> Some Unknown
         | Some "constructor" ->
-            let pars = try Some (getParams name props) with _ -> None
+            let pars = Some (getParams name props)
             let m = getMembers name props
             { m with Constructor = if pars.IsSome then pars else m.Constructor }
             |> Object
             |> Some
         | Some "number" -> None // There's only one, "dojo/_base/loader", that seems internal
-        | Some t ->
-            eprintfn "%s has unknown type '%A'" name t
-            None
-        | None ->
-            eprintfn "%s has no type" name
-            None
+        | Some t -> fail "%s has unknown type '%A'" name t
+        | None -> fail "%s has no type" name
 
     let rootElements : RootElement list =
         match jsonV with
@@ -235,7 +237,7 @@ module Definition =
 
     open IntelliFactory.WebSharper.Dom
 
-    let resolveType (s: string) =
+    let resolveType definedClasses (s: string) =
         match s.ToLower() with
         | "undefined" -> T<obj>
         | "object" -> T<obj>
@@ -246,9 +248,10 @@ module Definition =
         | "array" -> T<obj[]>
         | "void" -> T<unit>
         | "domnode" -> T<Node>
-        | t ->
-            //printfn "unknown type: %s" t
-            T<obj>
+        | _ ->
+            match Map.tryFind s definedClasses with
+            | None -> T<obj>
+            | Some (_, c: CodeModel.Class) -> c.Type
 
     let rec toNested (classes: (CodeModel.Class * string list) seq) =
         classes
@@ -269,46 +272,48 @@ module Definition =
             |=> Nested (toNested (nested |> List.map (fun (c, q) -> c, List.tail q))))
         |> List.ofSeq
 
-    let makeParameters (pars: DetailsFile.Parameter list) =
+    let makeParameters definedClasses (pars: DetailsFile.Parameter list) =
         let argTypes, revArgNames =
             ((Type.Parameters.Empty, []), pars)
             ||> List.fold (fun (pars, names) par ->
                 let p =
                     par.Types
-                    |> List.map resolveType
+                    |> List.map (resolveType definedClasses)
                     |> List.reduce (+)
                 pars * (if par.Required then p?(par.Name) else !?p?(par.Name)), par.Name :: names)
         argTypes, List.rev revArgNames
 
-    let makeFun name (pars: DetailsFile.Parameter list) (ret: string) =
-        let argTypes, argNames = makeParameters pars
-        (name => argTypes ^-> resolveType ret), argNames
+    let makeFun definedClasses name (pars: DetailsFile.Parameter list) (ret: string) =
+        let argTypes, argNames = makeParameters definedClasses pars
+        (name => argTypes ^-> resolveType definedClasses ret), argNames
 
-    let addMembers (m: DetailsFile.Members) c =
+    let addMembers definedClasses (m: DetailsFile.Members) c =
         c
         |+> Protocol (m.Properties |> List.choose (fun p ->
-            if p.Name.Contains "-" then None else // ignoring those for now, we'll see if they're necessary
-            Some (p.Name =? resolveType p.Type :> _)))
+            Some (p.Name =? resolveType definedClasses p.Type :> _)))
         |+> Protocol (m.Methods |> List.choose (fun m ->
-            if m.Name.Contains "-" then None else // ignoring those for now, we'll see if they're necessary
-            printfn "method: %s" m.Name
-            Some (makeFun m.Name m.Parameters m.ReturnType |> fst :> _)))
+            Some (makeFun definedClasses m.Name m.Parameters m.ReturnType |> fst :> _)))
         |+> (m.Constructor |> Option.map (fun c ->
-                Constructor (fst (makeParameters c)) :> CodeModel.IClassMember)
+                Constructor (fst (makeParameters definedClasses c)) :> CodeModel.IClassMember)
             |> Option.toList)
 
     let rootElements =
-        DetailsFile.rootElements
-        |> List.map (fun e ->
+        let classes =
+            DetailsFile.rootElements
+            |> List.map (fun e ->
+                let name = e.Name.Replace("/", ".")
+                name, (e, Class name))
+        let definedClasses = Map classes
+        classes
+        |> List.map (fun (_, (e, c)) ->
             let c =
-                let c = Class (e.Name.Replace("/", ".").Replace("-", "_"))
                 match e.Type with
                 | DetailsFile.Object m ->
                     c
-                    |> addMembers m
+                    |> addMembers definedClasses m
                 | DetailsFile.Function f ->
                     let invoke =
-                        let f, argNames = makeFun "invoke" f.Parameters f.ReturnType
+                        let f, argNames = makeFun definedClasses "invoke" f.Parameters f.ReturnType
                         let fInline =
                             let l =
                                 argNames
@@ -317,7 +322,7 @@ module Definition =
                         f //|> WithInline fInline
                     c
                     |+> Protocol [invoke]
-                    |> addMembers f.Members
+                    |> addMembers definedClasses f.Members
                 | DetailsFile.Unknown ->
                     c
             c, e.QualName)
