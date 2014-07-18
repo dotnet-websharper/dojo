@@ -367,48 +367,23 @@ module Definition =
                     c |=> Inherits sc
                 | None -> c
             let c =
-//                let eventClasses = ref []
                 c
                 |> addMembers definedClasses e.Type.Members
                 |+> Protocol (e.Type.Events |> List.collect (fun ev ->
-                    // event is either "onFooBar" or "_onFooBar"
+                    // event is either "onFooBar" or "_onFooBar";
+                    // convert this to "fooBar" or "_foobar".
                     let eventName =
                         if ev.Name.StartsWith "_" then
                             "_" + ev.Name.[3..3].ToLower() + ev.Name.[4..]
                         else
                             ev.Name.[2..2].ToLower() + ev.Name.[3..]
-//                    let eventClass =
-//                        Class (c.Name + "." + eventName + "EventArgs")
-//                        |+> Protocol (ev.Parameters |> List.map (fun p ->
-//                            p.Name =? resolveToOneType definedClasses p.Types :> _))
-//                    eventClasses := eventClass :: !eventClasses
                     let eventArgs = makeParameters definedClasses ev.Parameters |> fst
                     let callback = c -* eventArgs ^-> T<unit>
                     [
                         ev.Name => callback?callback ^-> T<unit>
                         |> WithInline ("$this.on('" + eventName + "', $callback)")
                     ]))
-//                |=> Nested !eventClasses
             c, e.QualName)
-//        |> List.map (fun (c, qn as x) ->
-//            if c.Name = "dojo.on" then
-//                (c
-//                    |+> Protocol (classes
-//                        |> List.collect (fun (_, (e, c)) ->
-//                            e.Type.Events |> List.collect (fun ev ->
-//                                printfn "%s" ev.Name
-//                                let eventClass =
-//                                    Class (c.Name + "EventArgs")
-//                                    |+> Protocol (ev.Parameters |> List.map (fun p ->
-//                                        p.Name =? resolveToOneType definedClasses p.Types :> _))
-//                                eventClasses := eventClass :: !eventClasses
-//                                let f = c -* eventClass ^-> T<unit>
-//                                [
-//                                    ev.Name => c * f ^-> T<unit>
-//                                    |> WithInline "on("
-//                                ])))
-//                ), qn
-//            else x)
 //        |> List.map (fun s ->
 //            printfn "%A" (snd s)
 //            s)
