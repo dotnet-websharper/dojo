@@ -61,15 +61,16 @@ module DetailsFile =
         }
 
     and Type =
-        | Function of Function
-        | Object of Members
-        | Unknown
+        {
+            Function: Function option
+            Members : Members
+            Superclass : string option
+        }
 
     and Function =
         {
             Parameters : Parameter list
             ReturnType : string
-            Members : Members
         }
 
     and Parameter =
@@ -175,27 +176,41 @@ module DetailsFile =
             Constructor = ctor
         }
 
+    let getSuperclass props =
+        List.tryAssoc "superclass" props
+        |> Option.map Json.asString
+
     let getRootElementType name props =
         match List.tryAssoc "type" props |> Option.map Json.asString with
         | Some "instance" | Some "object" ->
-            getMembers name props
-            |> Object
+            {
+                Function = None
+                Members = getMembers name props
+                Superclass = getSuperclass props
+            }
             |> Some
         | Some "function" ->
             let pars, ret = getParamsAndReturns name props
-            Function {
-                Parameters = pars
-                ReturnType = ret
+            {
+                Function = 
+                    Some {
+                        Parameters = pars
+                        ReturnType = ret
+                    }
                 Members = getMembers name props
+                Superclass = getSuperclass props
             }
             |> Some
-        | Some "undefined" -> Some Unknown
         | Some "constructor" ->
             let pars = Some (getParams name props)
             let m = getMembers name props
-            { m with Constructor = if pars.IsSome then pars else m.Constructor }
-            |> Object
+            {
+                Function = None
+                Members = { m with Constructor = if pars.IsSome then pars else m.Constructor }
+                Superclass = getSuperclass props
+            }
             |> Some
+        | Some "undefined" -> None // There's only one, "dojo/_firebug/firebug", that seems internal
         | Some "number" -> None // There's only one, "dojo/_base/loader", that seems internal
         | Some t -> fail "%s has unknown type '%A'" name t
         | None -> fail "%s has no type" name
@@ -307,11 +322,8 @@ module Definition =
         classes
         |> List.map (fun (_, (e, c)) ->
             let c =
-                match e.Type with
-                | DetailsFile.Object m ->
-                    c
-                    |> addMembers definedClasses m
-                | DetailsFile.Function f ->
+                match e.Type.Function with
+                | Some f ->
                     let invoke =
                         let f, argNames = makeFun definedClasses "invoke" f.Parameters f.ReturnType
                         let fInline =
@@ -319,13 +331,16 @@ module Definition =
                                 argNames
                                 |> String.concat ", $"
                             "$this(" + (if List.isEmpty argNames then "" else "$") + l + ")"
-                        f //|> WithInline fInline
-                    c
-                    |+> Protocol [invoke]
-                    |> addMembers definedClasses f.Members
-                | DetailsFile.Unknown ->
-                    c
-            c, e.QualName)
+                        f |> WithInline fInline
+                    c |+> Protocol [invoke]
+                | None -> c
+            let c =
+                match e.Type.Superclass with
+                | Some sc ->
+                    let sc = resolveType definedClasses sc
+                    c |=> Inherits sc
+                | None -> c
+            c |> addMembers definedClasses e.Type.Members, e.QualName)
 //        |> List.map (fun s ->
 //            printfn "%A" (snd s)
 //            s)
