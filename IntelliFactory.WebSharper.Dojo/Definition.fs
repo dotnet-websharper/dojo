@@ -194,7 +194,12 @@ module DetailsFile =
                 | Json.Object e ->
                     Some {
                         Name = List.assoc "name" e |> Json.asString
-                        Parameters = getParams name e
+                        Parameters =
+                            getParams name e
+                            |> List.map (fun p ->
+                                if p.Name = "event" then
+                                    { p with Types = ["DOMEvent"] }
+                                else p)
                     }
                 | _ -> None)
         | _ -> []
@@ -279,12 +284,13 @@ module Definition =
         | "undefined" -> T<obj>
         | "object" -> T<obj>
         | "string" -> T<string>
-        | "integer" -> T<int>
+        | "integer" | "int" -> T<int>
         | "number" -> T<float>
         | "boolean" -> T<bool>
         | "array" -> T<obj[]>
         | "void" -> T<unit>
         | "domnode" -> T<Node>
+        | "domevent" | "event" -> T<Event>
         | _ ->
             match Map.tryFind s definedClasses with
             | None -> T<obj>
