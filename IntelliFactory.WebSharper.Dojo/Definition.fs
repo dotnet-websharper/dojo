@@ -65,6 +65,7 @@ module DetailsFile =
             Function: Function option
             Members : Members
             Superclass : string option
+            Events : Event list
         }
 
     and Function =
@@ -98,6 +99,12 @@ module DetailsFile =
             Name : string
             Parameters : Parameter list
             ReturnType : string
+        }
+
+    and Event =
+        {
+            Name : string
+            Parameters : Parameter list
         }
 
     let typeOfArr x =
@@ -180,6 +187,18 @@ module DetailsFile =
         List.tryAssoc "superclass" props
         |> Option.map Json.asString
 
+    let getEvents name props =
+        match List.tryAssoc "events" props with
+        | Some (Json.Array es) ->
+            es |> List.choose (function
+                | Json.Object e ->
+                    Some {
+                        Name = List.assoc "name" e |> Json.asString
+                        Parameters = getParams name e
+                    }
+                | _ -> None)
+        | _ -> []
+
     let getRootElementType name props =
         match List.tryAssoc "type" props |> Option.map Json.asString with
         | Some "instance" | Some "object" ->
@@ -187,6 +206,7 @@ module DetailsFile =
                 Function = None
                 Members = getMembers name props
                 Superclass = getSuperclass props
+                Events = getEvents name props
             }
             |> Some
         | Some "function" ->
@@ -199,6 +219,7 @@ module DetailsFile =
                     }
                 Members = getMembers name props
                 Superclass = getSuperclass props
+                Events = getEvents name props
             }
             |> Some
         | Some "constructor" ->
@@ -208,6 +229,7 @@ module DetailsFile =
                 Function = None
                 Members = { m with Constructor = if pars.IsSome then pars else m.Constructor }
                 Superclass = getSuperclass props
+                Events = getEvents name props
             }
             |> Some
         | Some "undefined" -> None // There's only one, "dojo/_firebug/firebug", that seems internal
@@ -267,6 +289,10 @@ module Definition =
             match Map.tryFind s definedClasses with
             | None -> T<obj>
             | Some (_, c: CodeModel.Class) -> c.Type
+
+    let resolveToOneType definedClasses = function
+        | [] -> resolveType definedClasses "undefined"
+        | t::_ -> resolveType definedClasses t
 
     let rec toNested (classes: (CodeModel.Class * string list) seq) =
         classes
@@ -340,7 +366,49 @@ module Definition =
                     let sc = resolveType definedClasses sc
                     c |=> Inherits sc
                 | None -> c
-            c |> addMembers definedClasses e.Type.Members, e.QualName)
+            let c =
+//                let eventClasses = ref []
+                c
+                |> addMembers definedClasses e.Type.Members
+                |+> Protocol (e.Type.Events |> List.collect (fun ev ->
+                    // event is either "onFooBar" or "_onFooBar"
+                    let eventName =
+                        if ev.Name.StartsWith "_" then
+                            "_" + ev.Name.[3..3].ToLower() + ev.Name.[4..]
+                        else
+                            ev.Name.[2..2].ToLower() + ev.Name.[3..]
+//                    let eventClass =
+//                        Class (c.Name + "." + eventName + "EventArgs")
+//                        |+> Protocol (ev.Parameters |> List.map (fun p ->
+//                            p.Name =? resolveToOneType definedClasses p.Types :> _))
+//                    eventClasses := eventClass :: !eventClasses
+                    let eventArgs = makeParameters definedClasses ev.Parameters |> fst
+                    let callback = c -* eventArgs ^-> T<unit>
+                    [
+                        ev.Name => callback?callback ^-> T<unit>
+                        |> WithInline ("$this.on('" + eventName + "', $callback)")
+                    ]))
+//                |=> Nested !eventClasses
+            c, e.QualName)
+//        |> List.map (fun (c, qn as x) ->
+//            if c.Name = "dojo.on" then
+//                (c
+//                    |+> Protocol (classes
+//                        |> List.collect (fun (_, (e, c)) ->
+//                            e.Type.Events |> List.collect (fun ev ->
+//                                printfn "%s" ev.Name
+//                                let eventClass =
+//                                    Class (c.Name + "EventArgs")
+//                                    |+> Protocol (ev.Parameters |> List.map (fun p ->
+//                                        p.Name =? resolveToOneType definedClasses p.Types :> _))
+//                                eventClasses := eventClass :: !eventClasses
+//                                let f = c -* eventClass ^-> T<unit>
+//                                [
+//                                    ev.Name => c * f ^-> T<unit>
+//                                    |> WithInline "on("
+//                                ])))
+//                ), qn
+//            else x)
 //        |> List.map (fun s ->
 //            printfn "%A" (snd s)
 //            s)
