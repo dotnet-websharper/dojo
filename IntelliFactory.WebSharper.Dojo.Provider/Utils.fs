@@ -10,6 +10,8 @@ let ( .-? ) table key = Map.tryFind key table
 
 let ( +/ ) a b = System.IO.Path.Combine(a, b)
 
+let inline ( @?> ) e t = Quotations.Expr.Coerce(e, t)
+
 let capitalize (s: string) = s.[0 .. 0].ToUpper() + s.[1 ..]
 
 module Option =
@@ -28,3 +30,12 @@ module Option =
         | Some _ -> optionFrom
         | _ -> optionTo
 
+open IntelliFactory.WebSharper.Dojo.ProvidedTypes
+
+type ProvidedTypeDefinition with
+
+    member this.WithMember(mi) = this.AddMember(mi); this
+
+    member this.WithMemberDelayed(mi) = this.AddMemberDelayed(mi); this
+
+    member this.WithMembers(mi) = this.AddMembers(mi); this

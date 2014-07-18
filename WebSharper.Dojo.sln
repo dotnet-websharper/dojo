@@ -15,6 +15,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.D
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Dojo.Provider", "IntelliFactory.WebSharper.Dojo.Provider\IntelliFactory.WebSharper.Dojo.Provider.fsproj", "{EF4A245F-14F1-418A-AB92-E9658DDBEE72}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Dojo.Tests", "IntelliFactory.WebSharper.Dojo.Tests\IntelliFactory.WebSharper.Dojo.Tests.fsproj", "{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{EF4A245F-14F1-418A-AB92-E9658DDBEE72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF4A245F-14F1-418A-AB92-E9658DDBEE72}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF4A245F-14F1-418A-AB92-E9658DDBEE72}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

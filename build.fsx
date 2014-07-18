@@ -19,9 +19,19 @@ let typeProvider =
                 r.Project library
             ])
 
+let tests =
+    bt.WebSharper.HtmlWebsite("IntelliFactory.WebSharper.Dojo.Tests")
+        .SourcesFromProject()
+        .References(fun r ->
+            [
+                r.Project library
+                r.Project typeProvider
+            ])
+
 bt.Solution [
     library
     typeProvider
+    tests
 
     bt.PackageId("WebSharper.Dojo", "2.5").NuGet.CreatePackage()
         .Description("WebSharper extension for Dojo Toolkit")

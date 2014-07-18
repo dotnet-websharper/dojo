@@ -248,9 +248,6 @@ module DetailsFile =
             vals |> List.choose (function
             | name, Json.Object props ->
                 let qualName = name.Split([|'/'; '.'|])
-//                if qualName |> Seq.exists (fun s -> s.StartsWith("_")) then
-//                    None // Don't export internal classes
-//                else
                 getRootElementType name props
                 |> Option.map (fun t ->
                     {
@@ -405,11 +402,22 @@ module Definition =
                         |> WithInline ("$this.on('" + eventName + "', $callback)")
                     ]))
             c, e.QualName)
-//        |> List.map (fun s ->
-//            printfn "%A" (snd s)
-//            s)
         |> toNested
         |> List.map (fun c -> c :> CodeModel.NamespaceEntity)
+
+    module Hardcoded =
+
+        let AMD =
+            Class "AMD"
+            |+> [
+                Generic - fun t -> "require" => T<string[]>?requires * (t ^-> T<unit>)?callback ^-> T<unit>
+                |> WithInline "$global.require($requires, $global.IntelliFactory.Runtime.Tupled($callback))"
+            ]
+
+        let Classes : CodeModel.NamespaceEntity list =
+            [
+                AMD
+            ]
 
     let Assembly =
         Assembly [
@@ -417,7 +425,7 @@ module Definition =
                 Res.Config
                 Res.Js.AssemblyWide()
             ]
-            Namespace "IntelliFactory.WebSharper.Dojo" rootElements
+            Namespace "IntelliFactory.WebSharper.Dojo" (Hardcoded.Classes @ rootElements)
         ]
 
 [<Sealed>]
