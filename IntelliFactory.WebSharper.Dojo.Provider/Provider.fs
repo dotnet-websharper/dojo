@@ -45,7 +45,6 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
             fun typename pars ->
                 match pars with
                 | [| :? string as requires |] ->
-                    let dojoAssembly = typeof<Dojo>.Assembly
                     let requires =
                         requires.Split(',')
                         |> Array.map (fun s -> s.Trim())
