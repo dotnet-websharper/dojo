@@ -367,6 +367,21 @@ module Definition =
                     c |=> Inherits sc
                 | None -> c
             let c =
+                if e.Type.Members.Constructor.IsSome then
+                    let configObject =
+                        Pattern.Config (e.Name + ".Config") {
+                            Required = []
+                            Optional =
+                                e.Type.Members.Properties |> List.map (fun p ->
+                                    p.Name, resolveType definedClasses p.Type)
+                        }
+                    c
+                    |=> Nested [configObject]
+                    |+> [
+                        Constructor configObject
+                    ]
+                else c
+            let c =
                 c
                 |> addMembers definedClasses e.Type.Members
                 |+> Protocol (e.Type.Events |> List.collect (fun ev ->
