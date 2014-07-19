@@ -3,6 +3,7 @@
 
 open System.IO
 open System.IO.Compression
+open System.Diagnostics
 
 let Base = "dojo-release-1.10.0"
 
@@ -40,4 +41,35 @@ do
 
     printfn "Dojo ready to parse."
 
-// TODO: download and run js-doc-parse
+let JsParseBase = "js-doc-parse-master"
+
+do
+    printfn "Downloading %s..." JsParseBase
+    if Directory.Exists(JsParseBase) then
+        Directory.Delete(JsParseBase, true)
+    use s =
+        System.Net.HttpWebRequest
+            .Create("https://github.com/wkeese/js-doc-parse/archive/master.zip")
+            .GetResponse()
+            .GetResponseStream()
+    use z = new ZipArchive(s)
+    printfn "Extracting %s..." JsParseBase
+    z.ExtractToDirectory "."
+    
+    printfn "Configuring %s..." JsParseBase
+    File.WriteAllText(JsParseBase +/ "config.js",
+        File.ReadAllText(JsParseBase +/ "config.js")
+            .Replace("basePath: '../trunk',", sprintf "basePath: '../%s'," Base))
+
+    // TODO: for some reason the following doesn't work, need to run it by hand for now.
+
+    // printfn "Generating doc..."
+    // let info =
+    //     new ProcessStartInfo(
+    //         FileName = JsParseBase +/ "parse.bat",
+    //         Arguments = "config=config.js",
+    //         UseShellExecute = false,
+    //         CreateNoWindow = true)
+    // use p = Process.Start(info)
+    // p.WaitForExit()
+    // File.Copy(JsParseBase +/ "details.json", "IntelliFactory.WebSharper.Dojo" +/ "details.json")
