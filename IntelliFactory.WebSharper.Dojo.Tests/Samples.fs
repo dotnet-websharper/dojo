@@ -12,7 +12,7 @@ module Main =
     open IntelliFactory.WebSharper.Html
     open IntelliFactory.WebSharper.Dojo
 
-    type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry">
+    type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry, dojo/domReady!">
 
     [<JavaScript>]
     let Samples () =
