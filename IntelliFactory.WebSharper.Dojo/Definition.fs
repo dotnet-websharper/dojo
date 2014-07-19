@@ -354,7 +354,7 @@ module Definition =
             DetailsFile.rootElements
             |> List.map (fun e ->
                 let name = e.Name
-                name, (e, Class (name.Replace("/", "."))))
+                name, (e, Class (name.Replace("/", ".").Replace("-", "_"))))
         let definedClasses = Map classes
         classes
         |> List.map (fun (_, (e, c)) ->
