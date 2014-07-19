@@ -301,6 +301,10 @@ module Definition =
         | [] -> resolveType definedClasses "undefined"
         | t::_ -> resolveType definedClasses t
 
+    let WithNonCapitalizedName (c: CodeModel.Class) =
+        c.SourceName <- Some (let a = c.Name.Split('.') in a.[a.Length-1])
+        c
+
     let rec toNested (classes: (CodeModel.Class * string list) seq) =
         classes
         |> Seq.groupBy (snd >> List.head)
@@ -311,7 +315,7 @@ module Definition =
                 |> List.partition (fun (_, qualName) -> qualName.Length = 1)
             let parent =
                 match parent with
-                | [] -> Class parentName
+                | [] -> Class parentName |> WithNonCapitalizedName
                 | [c, _] -> c
                 | (c, _) :: _ ->
                     eprintfn "Warning: several classes with the same name %s" parentName
@@ -354,7 +358,7 @@ module Definition =
             DetailsFile.rootElements
             |> List.map (fun e ->
                 let name = e.Name
-                name, (e, Class (name.Replace("/", ".").Replace("-", "_"))))
+                name, (e, Class(name.Replace("/", ".").Replace("-", "_")) |> WithNonCapitalizedName))
         let definedClasses = Map classes
         classes
         |> List.map (fun (_, (e, c)) ->

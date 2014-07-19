@@ -69,8 +69,9 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                 | t -> findClass t rest
         let startClass, nested =
             match qualName with
-            | "Dojo" :: rest -> typeof<Dojo>, rest
-            | "Dijit" :: rest -> typeof<Dijit>, rest
+            | "dojo" :: rest -> typeof<dojo>, rest
+            | "dijit" :: rest -> typeof<dijit>, rest
+            | "dojox" :: rest -> typeof<dojox>, rest
             | _ -> failwithf "Unknown dojo type: %s" name
         findClass startClass nested
 
