@@ -85,7 +85,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                         |> Array.map (fun s -> s.Trim())
                     let members =
                         requires
-						|> Array.filter (fun s -> not (s.EndsWith("!"))) // filters requires such as dojo/domReady!
+                        |> Array.filter (fun s -> not (s.EndsWith("!"))) // filters requires such as dojo/domReady!
                         |> Array.mapi (fun i require ->
                             let ``type`` = findDojoClass require
                             let methods =
