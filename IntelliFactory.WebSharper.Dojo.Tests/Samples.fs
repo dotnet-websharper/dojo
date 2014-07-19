@@ -14,7 +14,7 @@ module Main =
 
     type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry, dojo/domReady!">
 
-    type App = XHtml<"Test.html">
+//    type App = XHtml<"Test.html">
 
     [<JavaScript>]
     let Samples () =
@@ -45,8 +45,8 @@ module Main =
                 |> ignore
                 (dojo.``dijit/registry``.ById "myCheckbox" :?> Dijit.Form.CheckBox)
                     .OnClick(fun (_:Dijit.Form.CheckBox) e -> JavaScript.Log e)
-                let byId (s: string) = dojo.``dijit/registry``.ById s
-                byId |> App.newProjectDialog |> ignore
+//                let byId (s: string) = dojo.``dijit/registry``.ById s
+//                byId |> App.newProjectDialog |> ignore
             )
         )
 
