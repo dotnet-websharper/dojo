@@ -1,0 +1,685 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <base target="_blank" href="/" />
+    <title>${Title}</title>
+    <link href="/forms.css" rel="Stylesheet" type="text/css" />
+    <link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://trifacta.github.io/vega/lib/topojson.js"></script>
+    <script type="text/javascript" src="http://trifacta.github.com/vega/lib/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://trifacta.github.com/vega/vega.js"></script>
+    <script type="text/javascript" src="http://trifacta.github.com/vega/lib/d3.geo.projection.min.js"></script>
+    <script type="text/javascript" src="http://trifacta.github.io/vega/lib/d3.layout.cloud.js"></script>
+
+    <meta name="generator" content="websharper" data-replace="scripts" />
+    <script type="text/javascript" src="/js/jquery.color-2.1.2.min.js"></script>
+    <link href="/style.css" rel="Stylesheet" type="text/css" />
+
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/shortcut.js"></script>
+    <meta data-replace="Head" />
+    <script type="text/javascript" src="/js/allCookies.js"></script>
+    <script type="text/javascript" src="/js/jquery.tinyscrollbar.min.js"></script>
+    <script type="text/javascript" src="/js/base64.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css' />
+
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dijit/themes/claro/claro.css" />
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dojox/layout/resources/ExpandoPane.css" />
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dojox/layout/resources/ResizeHandle.css" />
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dojox/grid/resources/Grid.css" />
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dojox/grid/resources/claroGrid.css" />
+</head>
+<body class="claro">
+    <div id="EntryPointPlace" data-hole="Body" class="c-place">
+    </div>
+    <div class="ear-container ear-loading" style="z-index:1000000">
+        <span id="LoadingPlace" class="c-place ear-tab"></span>
+        <span id="ErrorPlace" class="c-place ear-tab ear-error"></span>
+    </div>
+    <div class="navbar">
+        <ul class="nav flaty-nav pull-right">
+            <li class="hidden-phone global-menu-notifications">
+                <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:void(0)" title="Notifications">
+                    <i class="icon-bell-alt anim-swing"></i>
+                    <span class="badge badge-important global-menu-notifications-badge"></span>
+                </a>
+                <ul class="dropdown-navbar dropdown-menu">
+                    <li class="nav-header">
+                        <i class="icon-warning-sign"></i>
+                        <span class="global-menu-notifications-count">0</span> Notification(s)
+                    </li>
+                    <li class="notify global-menu-notifications-compiler-messages">
+                        <a href="javascript:void(0)">
+                            <span class="badge badge-info"></span>
+                            <i class="icon-smile green"></i>
+                            <h3>Intellisense</h3>
+                            <p>No errors.</p>
+                        </a>
+                    </li>
+                    <li class="notify global-menu-notifications-compiler-service">
+                        <a href="javascript:void(0)">
+                            <span class="badge badge-info"></span>
+                            <i class="icon-exclamation-sign blue"></i>
+                            <h3>F# service status</h3>
+                            <p>Service not connected.</p>
+                        </a>
+                    </li>
+                    <li class="notify global-menu-notifications-workspace">
+                        <a href="javascript:void(0)">
+                            <span class="badge badge-info"></span>
+                            <i class="icon-exclamation-sign blue"></i>
+                            <h3>Workspace</h3>
+                            <p>No workspace open.</p>
+                        </a>
+                    </li>
+                    <li class="notify global-menu-notifications-interactive">
+                        <a href="javascript:void(0)">
+                            <span class="badge badge-info"></span>
+                            <i class="icon-exclamation-sign blue"></i>
+                            <h3>F# Interactive</h3>
+                            <p>Service not connected.</p>
+                        </a>
+                    </li>
+                    <li class="notify global-menu-notifications-system">
+                        <a href="javascript:void(0)">
+                            <span class="badge badge-info"></span>
+                            <i class="icon-smile green"></i>
+                            <h3>System status</h3>
+                            <p>System healthy.</p>
+                        </a>
+                    </li>
+                    <!-- <li class="notify"> -->
+                    <!--   <a href="javascript:void(0)"> -->
+                    <!--     <i class="icon-comment orange"></i> -->
+                    <!--     <p>New Comments</p> -->
+                    <!--     <span class="badge badge-warning">4</span> -->
+                    <!--   </a> -->
+                    <!-- </li><li class="notify"> -->
+                    <!--   <a href="javascript:void(0)"> -->
+                    <!--     <i class="icon-twitter blue"></i> -->
+                    <!--     <p>New Twitter followers</p> -->
+                    <!--     <span class="badge badge-info">7</span> -->
+                    <!--   </a> -->
+                    <!-- </li><li class="notify"> -->
+                    <!--   <a href="javascript:void(0)"> -->
+                    <!--     <img src="img/demo/avatar/avatar2.jpg" alt="Alex" /> -->
+                    <!--     <p>David would like to become moderator.</p> -->
+                    <!--   </a> -->
+                    <!-- </li><li class="notify"> -->
+                    <!--   <a href="javascript:void(0)"> -->
+                    <!--     <i class="icon-bug pink"></i> -->
+                    <!--     <p>New bug in program!</p> -->
+                    <!--   </a> -->
+                    <!-- </li><li class="notify"> -->
+                    <!--   <a href="javascript:void(0)"> -->
+                    <!--     <i class="icon-shopping-cart green"></i> -->
+                    <!--     <p>You have some new orders</p> -->
+                    <!--     <span class="badge badge-success">+10</span> -->
+                    <!--   </a> -->
+                    <!-- </li><li class="more"> -->
+                    <!--   <a href="javascript:void(0)">See all notifications</a> -->
+                    <!-- </li> -->
+                </ul>
+            </li>
+            <li class="separator">&#160;</li>
+            <li class="hidden-phone global-menu-dashboard">
+                <a href="javascript:void(0)">
+                    <i class="icon-home"></i>
+                    <span class="badge badge-warning notify-count"></span>
+                </a>
+                <!-- <ul class="pull-right dropdown-navbar dropdown-menu"> -->
+                <!--     <li class="nav-header"> -->
+                <!--       <i class="icon-ok"></i> -->
+                <!--       4 Tasks to complete -->
+                <!--     </li><li> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <div class="clearfix"> -->
+                <!--           <span class="pull-left">Software Update</span> -->
+                <!--           <span class="pull-right">75%</span> -->
+                <!--         </div><div class="progress progress-mini progress-warning"> -->
+                <!--           <div style="width:75%" class="bar"></div> -->
+                <!--         </div> -->
+                <!--       </a> -->
+                <!--     </li><li> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <div class="clearfix"> -->
+                <!--           <span class="pull-left">Transfer To New Server</span> -->
+                <!--           <span class="pull-right">45%</span> -->
+                <!--         </div><div class="progress progress-mini progress-danger"> -->
+                <!--           <div style="width:45%" class="bar"></div> -->
+                <!--         </div> -->
+                <!--       </a> -->
+                <!--     </li><li> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <div class="clearfix"> -->
+                <!--           <span class="pull-left">Bug Fixes</span> -->
+                <!--           <span class="pull-right">20%</span> -->
+                <!--         </div><div class="progress progress-mini"> -->
+                <!--           <div style="width:20%" class="bar"></div> -->
+                <!--         </div> -->
+                <!--       </a> -->
+                <!--     </li><li> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <div class="clearfix"> -->
+                <!--           <span class="pull-left">Writing Documentation</span> -->
+                <!--           <span class="pull-right">85%</span> -->
+                <!--         </div><div class="progress progress-mini progress-success progress-striped active"> -->
+                <!--           <div style="width:85%" class="bar"></div> -->
+                <!--         </div> -->
+                <!--       </a> -->
+                <!--     </li><li class="more"> -->
+                <!--       <a href="javascript:void(0)">See tasks with details</a> -->
+                <!--     </li> -->
+                <!-- </ul> -->
+            </li>
+            <li class="hidden-phone global-menu-workspace">
+                <a href="javascript:void(0)">
+                    <i class="icon-edit anim-swing"></i>
+                    <span class="badge badge-important notify-count"></span>
+                </a>
+                <!-- <ul class="dropdown-navbar dropdown-menu"> -->
+                <!--     <li class="nav-header"> -->
+                <!--       <i class="icon-warning-sign"></i> -->
+                <!--       5 Notifications -->
+                <!--     </li><li class="notify"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <i class="icon-comment orange"></i> -->
+                <!--         <p>New Comments</p> -->
+                <!--         <span class="badge badge-warning">4</span> -->
+                <!--       </a> -->
+                <!--     </li><li class="notify"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <i class="icon-twitter blue"></i> -->
+                <!--         <p>New Twitter followers</p> -->
+                <!--         <span class="badge badge-info">7</span> -->
+                <!--       </a> -->
+                <!--     </li><li class="notify"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <img src="img/demo/avatar/avatar2.jpg" alt="Alex" /> -->
+                <!--         <p>David would like to become moderator.</p> -->
+                <!--       </a> -->
+                <!--     </li><li class="notify"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <i class="icon-bug pink"></i> -->
+                <!--         <p>New bug in program!</p> -->
+                <!--       </a> -->
+                <!--     </li><li class="notify"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <i class="icon-shopping-cart green"></i> -->
+                <!--         <p>You have some new orders</p> -->
+                <!--         <span class="badge badge-success">+10</span> -->
+                <!--       </a> -->
+                <!--     </li><li class="more"> -->
+                <!--       <a href="javascript:void(0)">See all notifications</a> -->
+                <!--     </li> -->
+                <!-- </ul> -->
+            </li>
+            <li class="hidden-phone global-menu-deploy">
+                <a href="javascript:void(0)">
+                    <i class="icon-desktop anim-top-down"></i>
+                    <span class="badge badge-success notify-count"></span>
+                </a>
+                <!-- <ul class="dropdown-navbar dropdown-menu"> -->
+                <!--     <li class="nav-header"> -->
+                <!--       <i class="icon-comments"></i> -->
+                <!--       3 Messages -->
+                <!--     </li><li class="msg"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <img src="img/demo/avatar/avatar3.jpg" alt="Sarah's Avatar" /> -->
+                <!--         <div> -->
+                <!--           <span class="msg-title">Sarah</span> -->
+                <!--           <span class="msg-time"> -->
+                <!--             <i class="icon-time"></i> -->
+                <!--             <span>a moment ago</span> -->
+                <!--           </span> -->
+                <!--         </div> -->
+                <!--         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p> -->
+                <!--       </a> -->
+                <!--     </li><li class="msg"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <img src="img/demo/avatar/avatar4.jpg" alt="Emma's Avatar" /> -->
+                <!--         <div> -->
+                <!--           <span class="msg-title">Emma</span> -->
+                <!--           <span class="msg-time"> -->
+                <!--             <i class="icon-time"></i> -->
+                <!--             <span>2 Days ago</span> -->
+                <!--           </span> -->
+                <!--         </div> -->
+                <!--         <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ...</p> -->
+                <!--       </a> -->
+                <!--     </li><li class="msg"> -->
+                <!--       <a href="javascript:void(0)"> -->
+                <!--         <img src="img/demo/avatar/avatar5.jpg" alt="John's Avatar" /> -->
+                <!--         <div> -->
+                <!--           <span class="msg-title">John</span> -->
+                <!--           <span class="msg-time"> -->
+                <!--             <i class="icon-time"></i> -->
+                <!--             <span>8:24 PM</span> -->
+                <!--           </span> -->
+                <!--         </div> -->
+                <!--         <p>Duis aute irure dolor in reprehenderit in ...</p> -->
+                <!--       </a> -->
+                <!--     </li><li class="more"> -->
+                <!--       <a href="javascript:void(0)">See all messages</a> -->
+                <!--     </li> -->
+                <!-- </ul> -->
+            </li>
+            <li class="separator">&#160;</li>
+            <li class="global-toolbar-user-profile">
+                <a data-toggle="dropdown" href="javascript:void(0)" class="global-toolbar-user-menu dropdown-toggle">
+                    <img class="nav-user-photo global-menu-picture" src="http://www.gravatar.com/avatar/0?d=mm&amp;s=29" alt="User picture" />
+                    <span class="hidden-phone global-menu-username">(not logged in)</span>
+                    <i class="icon-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-navbar" id="user_menu">
+                    <li class="nav-header">
+                        <i class="icon-time"></i>
+                        Logged in since <span class="global-menu-login-time"></span>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" class="global-menu-account">
+                            <i class="icon-cog"></i>
+                            Account Settings
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a href="javascript:void(0)" class="global-menu-profile">
+                            <i class="icon-user"></i>
+                            Edit Profile
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a href="javascript:void(0)" class="global-menu-features">
+                            <i class="icon-cogs"></i>
+                            Features
+                        </a>
+                    </li>
+                    <!--<li>
+                      <a href="javascript:void(0)" class="global-menu-workspaces">
+                        <i class="icon-folder-open"></i>
+                        My Workspaces
+                      </a>
+                    </li>-->
+                    <!-- <li class="divider"></li><li> -->
+                    <!--   <a href="/home" class="global-menu-download"> -->
+                    <!--     <i class="icon-cloud-download"></i> -->
+                    <!--     Download CloudSharper Local -->
+                    <!--   </a> -->
+                    <!-- </li> -->
+                    <li>
+                        <a href="javascript:void(0)" class="global-menu-feedback">
+                            <i class="icon-smile"></i>
+                            Send feedback
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" class="global-menu-logout">
+                            <i class="icon-off"></i>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div data-replace="Home"></div>
+    <span id="LoadingMessageTemplate" class="c-template">
+        <span id="Message">Loading...</span><br />
+    </span>
+    <span id="ReconnectMessageTemplate" class="c-template">
+        Lost connection. Reconnecting in <span id="Time"></span>... <span id="ForceReconnect"></span>
+    </span>
+    <div id="DashboardMenuTemplate" class="c-template">
+        <div style="position:absolute;"><h1>&lt;CLOUDSHARPER LOGO HERE&gt;</h1></div>
+        <div class="dashboard-block dashboard-menu-block" style="left: 0; width: 30%;">
+            <div>
+                <header>
+                    <a class="button" href="#" id="my-workspaces-btn"><span class="icon-edit"></span>My workspaces...</a>
+                    <a class="button" href="#"><span class="icon-plus"></span>More templates...</a>
+                    <div style="clear:both;"></div>
+                    <h1>Featured templates</h1>
+                </header>
+                <ul id="dashboard-menu-list">
+                    <li>Loading...</li>
+                    <!--<li><a href="#"><img src="/images/sencha.png" />Sencha Touch Application</a></li>
+                    <li><a href="#"><img src="/images/jquery-mobile.png" />jQuery Mobile Application</a></li>
+                    <li><a href="#"><img src="/images/html5.png" />HTML5 Application</a></li>
+                    <li><a href="#"><img src="/images/webgl.png" />WebGL Game</a></li>
+                    <li><a href="#"><img src="/images/iio.png" />IIO Engine Game</a></li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="dashboard-block hide" id="dashboard-descr" style="visible:hidden;left:30%; width: 70%">
+        </div>
+    </div>
+
+    <div id="mainViewport" style="height: 100%;" data-dojo-type="dijit/layout/StackContainer">
+        <div id="dashboardScreen" style="height: 100%;" data-dojo-type="dijit/layout/BorderContainer">
+            <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left'">
+                <img src="http://www.gravatar.com/avatar/0?d=mm&amp;s=218" height="218" width="218" />
+                <div id="userName" style="text-align: center">User name</div>
+                <div id="createDate" style="text-align: center">Create date</div>
+                <div id="CodeProviders">
+                    <h2>Code repositories</h2>
+                    <ul>
+                        <li>Github</li>
+                        <li>BitBucket</li>
+                    </ul>
+                </div>
+            </div>
+            <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top', layoutPriority: 1">
+                <div id="welcomeHeader">
+                    <div class="welcomeHeaderError">
+                        <header><b>The following operation failed: </b> <span id="welcomeHeaderErrorName"></span></header>
+                        <p class="whenIsNotEvent">
+                            This is most likely due to the fact that
+                            you are not running the <b>CloudSharper Local component</b>. If you
+                            do not have it installed, follow the instructions below, then click
+                            the "Retry" button.
+                        </p>
+                        <p class="whenIsEvent">
+                            You are trying to connect to a server set up
+                            for an event, but this connection has failed. Please contact the
+                            organizer of this event for troubleshooting.
+                        </p>
+                        <p style="text-align:center;"><a id="welcomeHeaderErrorRetry"></a></p>
+                    </div>
+                    <p>
+                        <b>Installation: </b> CloudSharper in Local Mode uses the tools
+                        installed on your machine. Therefore, to run F# web and mobile projects
+                        you need the following installed:
+                    </p>
+                    <div style="width:50%;float:left;">
+                        <h3>On Windows:</h3>
+                        <ul>
+                            <li>.NET 4.0 or higher</li>
+                            <li>
+                                F# 3.1 (you can download
+                                it <a href="http://www.microsoft.com/en-us/download/details.aspx?id=41654">here</a>)
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="width:50%;float:left;">
+                        <h3>On Linux / Mac OS X:</h3>
+                        <ul>
+                            <li>Mono 3.4.0 or higher</li>
+                            <li>
+                                F# 3.1 (find how to install it
+                                on <a href="http://fsharp.org/use/linux/">Linux</a> and
+                                on <a href="http://fsharp.org/use/mac/">Mac</a>)
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix" style="padding-bottom: 10px;">
+                        You can then install and start the CloudSharper Local component:
+                    </div>
+                    <div style="width:50%;float:left;">
+                        <a class="btn" style="visibility: hidden;" href="/downloads/CloudSharper.Installer.msi">Windows installer</a>
+                    </div>
+                    <div style="width:50%;float:left;">
+                        <a class="btn" style="visibility: hidden;" href="https://cloudsharper.blob.core.windows.net/macosx/CloudSharper.${Version}.pkg">Mac OS X installer</a>
+                        <a class="btn" style="visibility: hidden;" href="/downloads/CloudSharper.zip">Cross-platform zip</a>
+                    </div>
+                    <div class="clearfix" style="padding-bottom: 1em;"></div>
+                </div>
+            </div>
+            <div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center', tabPosition: 'top'">
+                <div style="height: 100%;" data-dojo-type="dijit/layout/BorderContainer" title="Workspaces">
+                    <!--<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top', layoutPriority: 1">-->
+                    <div data-dojo-type="dijit/MenuBar" data-dojo-props="region: 'top', layoutPriority: 1">
+                        <div data-dojo-type="dijit/PopupMenuBarItem">
+                            <span>Edit</span>
+                            <div data-dojo-type="dijit/DropDownMenu" id="editWSMenu">
+                                <div data-dojo-type="dijit/MenuItem">Open Workspace</div>
+                                <div data-dojo-type="dijit/MenuItem">Workspace Properties...</div>
+                            </div>
+                        </div>
+                        <div data-dojo-type="dijit/PopupMenuBarItem">
+                            <span>More</span>
+                            <div data-dojo-type="dijit/DropDownMenu" id="moreMenu">
+                                <div data-dojo-type="dijit/MenuItem">Download Zip</div>
+                                <div data-dojo-type="dijit/MenuItem">Delete</div>
+                                <div data-dojo-type="dijit/MenuItem">Turn into a Template</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--</div>-->
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
+                        <table data-dojo-type="dojox.grid.DataGrid">
+                            <thead>
+                                <tr>
+                                    <th field="name" width="16em">Name</th>
+                                    <th field="opened" width="8em">Last Opened</th>
+                                    <th field="created" width="8em">Created</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+                    <div style="width: 50%" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'right'">
+                        <div id="workspacesText">
+                            <h2 style="text-align:center">Your workspaces</h2>
+                            In CloudSharper, everything you do belongs to a <b>workspace</b>. To get started, just create a workspace below.
+                        </div>
+                        <div style="text-align: center">
+                            <input data-dojo-type="dijit/form/TextBox" type="text" placeholder="Enter workspace name" />
+                        </div>
+                        <div style="text-align: center">
+                            <button data-dojo-type="dijit/form/ComboButton">
+                                <span>Create a workspace</span>
+                                <div data-dojo-type="dijit/Menu" style="display: none;">
+                                    <div data-dojo-type="dijit/MenuItem">Advanced...</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!--<div data-dojo-type="dijit/layout/ContentPane" title="Events">
+                    Events tab
+                </div>-->
+            </div>
+        </div>
+
+        <div id="workspaceScreen" style="height: 100%" data-dojo-type="dijit/layout/BorderContainer">
+            <div data-dojo-type="dijit/MenuBar" data-dojo-props="region: 'top'">
+                <div data-dojo-type="dijit/PopupMenuBarItem">
+                    <span>File</span>
+                    <div data-dojo-type="dijit/DropDownMenu" id="fileMenu">
+                        <div data-dojo-type="dijit/MenuItem">New File...</div>
+                        <div data-dojo-type="dijit/MenuItem" data-dojo-props="onClick:function(){ registry.byId('newProjectDialog').show(); }">New Project...</div>
+                        <div data-dojo-type="dijit/MenuItem">Save</div>
+                        <div data-dojo-type="dijit/MenuItem">Save All</div>
+                        <div data-dojo-type="dijit/MenuItem">Close</div>
+                    </div>
+                </div>
+                <div data-dojo-type="dijit/PopupMenuBarItem">
+                    <span>Workspace</span>
+                    <div data-dojo-type="dijit/DropDownMenu" id="wsMenu">
+                        <div data-dojo-type="dijit/MenuItem">Workspace Properties...</div>
+                        <div data-dojo-type="dijit/MenuItem">Publish Workspace</div>
+                        <div data-dojo-type="dijit/MenuSeparator"></div>
+                        <div data-dojo-type="dijit/MenuItem">Build with MSBuild</div>
+                        <div data-dojo-type="dijit/MenuItem">Clean with MSBuild</div>
+                        <div data-dojo-type="dijit/MenuSeparator"></div>
+                        <div data-dojo-type="dijit/MenuItem">Build with IF.Build</div>
+                        <div data-dojo-type="dijit/MenuItem">Clean with IF.Build</div>
+                        <div data-dojo-type="dijit/MenuSeparator"></div>
+                        <div data-dojo-type="dijit/MenuItem">Deploy locally...</div>
+                        <div data-dojo-type="dijit/MenuItem">Deploy to AppHarbor...</div>
+                        <div data-dojo-type="dijit/MenuItem">Setup AppHarbor deployment...</div>
+                        <div data-dojo-type="dijit/MenuSeparator"></div>
+                        <div data-dojo-type="dijit/MenuItem">Close Workspace</div>
+                    </div>
+                </div>
+                <div data-dojo-type="dijit/PopupMenuBarItem">
+                    <span>View</span>
+                    <div data-dojo-type="dijit/DropDownMenu" id="viewMenu">
+                        <div data-dojo-type="dijit/MenuItem">Dashboard</div>
+                        <div data-dojo-type="dijit/MenuItem">Deployment</div>
+                        <div data-dojo-type="dijit/MenuSeparator"></div>
+                        <div data-dojo-type="dijit/MenuItem">Console</div>
+                        <div data-dojo-type="dijit/MenuItem">Interactive</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wsTreesExpand" style="width: 14em;" data-dojo-type="dojox/layout/ExpandoPane" title="Workspace" data-dojo-props="region: 'left', splitter: true">
+                <div id="wsTreesAccordion" data-dojo-type="dijit/layout/AccordionContainer">
+                    <div data-dojo-type="dijit/layout/AccordionPane" title="Solution">
+                        <div id="wsSlnTree" data-dojo-type="dijit/Tree"
+                             data-dojo-props="model: continentModel, query:{ type:'continent'}, label:'Continents'">
+                        </div>
+                    </div>
+                    <div data-dojo-type="dijit/layout/AccordionPane" title="Files">
+                        <div id="wsFilesTree" data-dojo-type="dijit/Tree"
+                             data-dojo-props="model: continentModel, query:{ type:'continent'}, label:'Continents'">
+                        </div>
+                    </div>
+                    <div data-dojo-type="dijit/layout/AccordionPane" title="Documentation">
+                        <div id="wsDocTree" data-dojo-type="dijit/Tree"
+                             data-dojo-props="model: continentModel, query:{ type:'continent'}, label:'Continents'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wsTabs" data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center', tabPosition: 'top'">
+                <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="closable: true" title="README.md">
+                    Contents of README.md
+                </div>
+                <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="closable: true" title="Main.fs">
+                    Contents of Main.fs
+                </div>
+            </div>
+
+            <div id="wsMessagesExpand" data-dojo-type="dojox/layout/ExpandoPane" title="Messages" data-dojo-props="region: 'bottom', splitter: true, layoutPriority: 1">
+                <div id="wsMessagesTabs" data-dojo-type="dijit/layout/TabContainer" data-dojo-props="tabPosition: 'bottom'">
+                    <div data-dojo-type="dijit/layout/ContentPane" title="Build">
+                        Build messages
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" title="IntelliSense">
+                        IntelliSense messages
+                    </div>
+                </div>
+            </div>
+
+            <div id="newProjectDialog" data-dojo-type="dijit/Dialog" title="New project" style="display:none;">
+                <div id="newProjectContent" class="csDialogInner dijitDialogPaneContentArea" data-dojo-type="dijit/layout/BorderContainer">
+                    <div data-dojo-type="dijit/Tree" data-dojo-props="region:'left', splitter: true, model: continentModel, query:{ type:'continent'}, label:'Continents'">
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
+                        Project icons and description
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'bottom'">
+                        <table style="width: 100%; table-layout: fixed;">
+                            <tr>
+                                <td>
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td style="width: 5em;"><label for="name">Name: </label></td>
+                                            <td><input data-dojo-type="dijit/form/TextBox" type="text" name="name" id="name" style="width: 100%;" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="loc">Base path: </label></td>
+                                            <td><input data-dojo-type="dijit/form/TextBox" type="text" name="loc" id="loc" style="width: 100%;" /></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 13em;">
+                                    <div>
+                                        <input data-dojo-type="dijit/form/RadioButton" type="radio" id="toCurrent" name="toCurrent" checked="checked" value="toCurrent" />
+                                        <label for="toCurrent">Add to current workspace</label>
+                                    </div>
+                                    <div>
+                                        <input data-dojo-type="dijit/form/RadioButton" type="radio" id="newWS" name="newWS" value="newWS" disabled="disabled" />
+                                        <label for="newWS">Create new workspace</label>
+                                    </div>
+                                    <div>
+                                        <input data-dojo-type="dijit/form/CheckBox" type="checkbox" id="toGit" name="toGit" disabled="disabled" />
+                                        <label for="toGit">Add to git</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="dijitDialogPaneActionBar">
+                    <button data-dojo-type="dijit/form/Button" type="submit" class="okButton">
+                        OK
+                    </button>
+                    <button data-dojo-type="dijit/form/Button" type="button" class="cancelButton"
+                            data-dojo-props="onClick:function(){ registry.byId('newProjectDialog').onCancel(); }">
+                        Cancel
+                    </button>
+                </div>
+                <div data-dojo-type="dojox/layout/ResizeHandle" data-dojo-props="targetId: 'newProjectContent', activeResize: true"></div>
+                <!--<div class="dijitDialogPaneContentArea" style="height:100%;">
+                </div>-->
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dojo/dojo.js"></script>
+    <script src="mock.js"></script>
+
+    <!--<div style="display:none">
+      <div id="welcomeHeader">
+        <div class="welcomeHeaderError">
+          <header><b>The following operation failed: </b> <span id="welcomeHeaderErrorName"></span></header>
+          <p class="whenIsNotEvent">This is most likely due to the fact that
+          you are not running the <b>CloudSharper Local component</b>. If you
+          do not have it installed, follow the instructions below, then click
+          the "Retry" button.</p>
+          <p class="whenIsEvent">You are trying to connect to a server set up
+          for an event, but this connection has failed. Please contact the
+          organizer of this event for troubleshooting.</p>
+          <p style="text-align:center;"><a id="welcomeHeaderErrorRetry"></a></p>
+        </div>
+        <p><b>Installation: </b> CloudSharper in Local Mode uses the tools
+          installed on your machine. Therefore, to run F# web and mobile projects
+          you need the following installed:</p>
+        <div style="width:50%;float:left;">
+          <h3>On Windows:</h3>
+          <ul>
+            <li>.NET 4.0 or higher</li>
+            <li>F# 3.1 (you can download
+              it <a href="http://www.microsoft.com/en-us/download/details.aspx?id=41654">here</a>)</li>
+          </ul>
+        </div>
+        <div style="width:50%;float:left;">
+          <h3>On Linux / Mac OS X:</h3>
+          <ul>
+            <li>Mono 3.4.0 or higher</li>
+            <li>F# 3.1 (find how to install it
+              on <a href="http://fsharp.org/use/linux/">Linux</a> and
+              on <a href="http://fsharp.org/use/mac/">Mac</a>)</li>
+          </ul>
+        </div>
+        <div class="clearfix" style="padding-bottom: 10px;">
+          You can then install and start the CloudSharper Local component:
+        </div>
+        <div style="width:50%;float:left;">
+          <a class="btn" style="visibility: hidden;" href="/downloads/CloudSharper.Installer.msi">Windows installer</a>
+        </div>
+        <div style="width:50%;float:left;">
+          <a class="btn" style="visibility: hidden;" href="https://cloudsharper.blob.core.windows.net/macosx/CloudSharper.${Version}.pkg">Mac OS X installer</a>
+          <a class="btn" style="visibility: hidden;" href="/downloads/CloudSharper.zip">Cross-platform zip</a>
+        </div>
+        <div class="clearfix" style="padding-bottom: 1em;"></div>
+      </div>
+      <div id="workspacesText">
+        <h2 style="text-align:center">Your workspaces</h2>
+        In CloudSharper, everything you do belongs to a <b>workspace</b>. To get started, just create a workspace below.
+      </div>
+      <div id="CodeProviders">
+          <h2>Code repositories</h2>
+          <ul>
+              <li>Github</li>
+              <li>BitBucket</li>
+          </ul>
+      </div>
+    </div>-->
+</body>
+</html>
