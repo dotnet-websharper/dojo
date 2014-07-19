@@ -22,18 +22,18 @@ module Main =
             Label [Attr.For "myCheckbox"] -< [Text "My checkbox"]
         ]
         |>! OnAfterRender (fun div ->
-            Req.Run(fun dojo ->
+            Req.Run(fun d ->
                 let cb =
-                    dojo.``dijit/form/CheckBox``(
-                        Dijit.Form.CheckBox.Config(
+                    d.``dijit/form/CheckBox``(
+                        dijit.form.CheckBox.Config(
                             Id = "myCheckbox"))
                 cb.PlaceAt(div.Body, "first")
                 |> ignore
-                dojo.``dijit/form/ComboBox``(
-                    Dijit.Form.ComboBox.Config(
+                d.``dijit/form/ComboBox``(
+                    dijit.form.ComboBox.Config(
                         Store =
-                            dojo.``dojo/store/Memory``(
-                                Dojo.Store.Memory.Config(
+                            d.``dojo/store/Memory``(
+                                dojo.store.Memory.Config(
                                     Data =
                                         [|
                                             New ["name" => "Entry 1"; "id" => 1]
@@ -43,9 +43,9 @@ module Main =
                         Value = "Entry 2"))
                     .PlaceAt(div.Body, "last")
                 |> ignore
-                (dojo.``dijit/registry``.ById "myCheckbox" :?> Dijit.Form.CheckBox)
-                    .OnClick(fun (_:Dijit.Form.CheckBox) e -> JavaScript.Log e)
-//                let byId (s: string) = dojo.``dijit/registry``.ById s
+                (d.``dijit/registry``.ById "myCheckbox" :?> dijit.form.CheckBox)
+                    .OnClick(fun (_:dijit.form.CheckBox) e -> JavaScript.Log e)
+//                let byId (s: string) = d.``dijit/registry``.ById s
 //                byId |> App.newProjectDialog |> ignore
             )
         )

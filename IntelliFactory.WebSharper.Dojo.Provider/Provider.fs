@@ -59,7 +59,6 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
     let findDojoClass (name: string) =
         let qualName =
             name.Replace('/', '.').Replace('-', '_').Split('.')
-            |> Array.map capitalize
             |> List.ofSeq
         let rec findClass (t: System.Type) = function
             | [] -> t
