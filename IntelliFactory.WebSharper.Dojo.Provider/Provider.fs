@@ -3,10 +3,12 @@
 open System
 open System.IO
 open System.Reflection
+open System.Xml.Linq
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Core.CompilerServices
 open IntelliFactory.WebSharper
+
 
 open IntelliFactory.WebSharper.Dojo.ProvidedTypes
 
@@ -21,6 +23,9 @@ module public Inlines =
 
     [<Inline "$tuple[$idx].apply($tuple[$idx], $args)">]
     let TupleInvoke (tuple: 'a) (idx: int) (args: obj[]) = X<'b>
+
+    [<Inline "$func($arg)">]
+    let InvokeFunc (func: obj) (arg: obj) = X<obj>
 
 open Inlines
 
@@ -44,10 +49,33 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
          
     let rootNamespace = "IntelliFactory.WebSharper.Dojo"
 
-    let appTy = ProvidedTypeDefinition(thisAssembly, rootNamespace, "Require", None)
+    let objTy = typeof<obj>
+
+    let requireTy = ProvidedTypeDefinition(thisAssembly, rootNamespace, "Require", None)
+    let xhtmlTy = ProvidedTypeDefinition(thisAssembly, rootNamespace, "XHtml", None)
+
+    let mutable watcher: FileSystemWatcher = null
+
+    let findDojoClass (name: string) =
+        let qualName =
+            name.Replace('/', '.').Replace('-', '_').Split('.')
+            |> Array.map capitalize
+            |> List.ofSeq
+        let rec findClass (t: System.Type) = function
+            | [] -> t
+            | n :: rest ->
+                match t.GetNestedType(n) with
+                | null -> failwithf "Unknown dojo type: %s" name
+                | t -> findClass t rest
+        let startClass, nested =
+            match qualName with
+            | "Dojo" :: rest -> typeof<Dojo>, rest
+            | "Dijit" :: rest -> typeof<Dijit>, rest
+            | _ -> failwithf "Unknown dojo type: %s" name
+        findClass startClass nested
 
     do
-        appTy.DefineStaticParameters(
+        requireTy.DefineStaticParameters(
             [ProvidedStaticParameter("requires", typeof<string>)],
             fun typename pars ->
                 match pars with
@@ -58,23 +86,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                     let members =
                         requires
                         |> Array.mapi (fun i require ->
-                            let qualName =
-                                require.Replace('/', '.').Replace('-', '_').Split('.')
-                                |> Array.map capitalize
-                                |> List.ofSeq
-                            let ``type`` =
-                                let rec findClass (t: System.Type) = function
-                                    | [] -> t
-                                    | n :: rest ->
-                                        match t.GetNestedType(n) with
-                                        | null -> failwithf "Unknown require: %s" require
-                                        | t -> findClass t rest
-                                let startClass, nested =
-                                    match qualName with
-                                    | "Dojo" :: rest -> typeof<Dojo>, rest
-                                    | "Dijit" :: rest -> typeof<Dijit>, rest
-                                    | _ -> failwithf "Unknown require: %s" require
-                                findClass startClass nested
+                            let ``type`` = findDojoClass require
                             let methods =
                                 ``type``.GetConstructors()
                                 |> Array.map (fun m ->
@@ -85,9 +97,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                         |> List.ofSeq
                                     ProvidedMethod(require, pars, ``type``,
                                         InvokeCode = fun (this :: args) ->
-                                            let args = args |> List.map (fun e -> <@@ (%%(e @?> typeof<obj>)) @@>
-                                            )
-                                            let args = Expr.NewArray(typeof<obj>, args)
+                                            let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
                                             <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``))
                             let types, extraMethods =
                                 let meths = ``type``.GetMethods()
@@ -103,8 +113,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                                 |> List.ofSeq
                                             ProvidedMethod(m.Name, pars, m.ReturnType,
                                                 InvokeCode = fun (this :: args) ->
-                                                    let args = args |> List.map (fun e -> <@@ (%%(e @?> typeof<obj>)) @@>)
-                                                    let args = Expr.NewArray(typeof<obj>, args)
+                                                    let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
                                                     let n = uncapitalize m.Name
                                                     <@@ Inlines.TupleInvokeMethod (%%this) i n (%%args : obj[]) @@> @?> ``type``))
                                         |> List.ofSeq
@@ -144,7 +153,54 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                     <@@ AMD.Require(requires, (%%fn)) @@> @?> typeof<unit>)
                         )
                 | _ -> failwith "Unexpected parameter values")
-        this.AddNamespace(rootNamespace, [ appTy ])
+        
+        xhtmlTy.DefineStaticParameters(
+            [ProvidedStaticParameter("path", typeof<string>)],
+            fun typename pars ->
+                match pars with
+                | [| :? string as path |] ->
+                    let ty = ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
+
+                    let htmlFile = 
+                        if Path.IsPathRooted path then path 
+                        else cfg.ResolutionFolder +/ path
+
+                    if cfg.IsInvalidationSupported then
+                        if watcher <> null then 
+                            watcher.Dispose()
+                        watcher <- new FileSystemWatcher(Path.GetDirectoryName htmlFile, Path.GetFileName htmlFile, EnableRaisingEvents = true)
+                        watcher.Changed.Add <| fun _ -> 
+                            this.Invalidate()
+                    
+                    let xml = XDocument.Parse(File.ReadAllText htmlFile)
+
+                    let xn n = XName.Get n
+
+                    let byIdTy = typeof<string -> obj>
+
+                    let findDojoClass name =
+                        try findDojoClass name
+                        with _ -> typeof<obj>
+
+                    xml.Root.Element(xn"body").Descendants()
+                    |> Seq.choose (fun e ->
+                        let idAttr = e.Attribute(xn"id")
+                        let dojoTypeAttr = e.Attribute(xn"data-dojo-type")
+                        if idAttr <> null && dojoTypeAttr <> null then
+                            Some (idAttr.Value, dojoTypeAttr.Value)
+                        else None     
+                    )
+                    |> Seq.iter (fun (i, t) ->
+                        let returnTy = findDojoClass t
+                        ty.AddMember <| ProvidedMethod(i, [ ProvidedParameter("byId", byIdTy) ], returnTy, IsStaticMethod = true
+                        ,   InvokeCode = fun [ byId ] -> <@@ InvokeFunc %%(byId @?> objTy) i @@> @?> returnTy   
+                        ) 
+                    )
+
+                    ty
+                | _ -> failwith "Unexpected parameter values")
+        
+        this.AddNamespace(rootNamespace, [ requireTy; xhtmlTy ])
 
 [<TypeProviderAssembly>]
 do ()

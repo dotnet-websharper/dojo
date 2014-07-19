@@ -18,4 +18,8 @@
     <Compile Include="Utils.fs" />
     <Compile Include="Provider.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
 </Project>

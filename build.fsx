@@ -17,6 +17,8 @@ let typeProvider =
         .References(fun r ->
             [
                 r.Project library
+                r.Assembly "System.Xml"
+                r.Assembly "System.Xml.Linq"
             ])
 
 let tests =
