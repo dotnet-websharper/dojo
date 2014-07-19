@@ -92,6 +92,7 @@ module DetailsFile =
         {
             Name : string
             Type : string
+            IsStatic : bool
         }
 
     and Method =
@@ -99,6 +100,7 @@ module DetailsFile =
             Name : string
             Parameters : Parameter list
             ReturnType : string
+            IsStatic : bool
         }
 
     and Event =
@@ -166,6 +168,7 @@ module DetailsFile =
                             match List.assoc "types" o |> typeOfArr with
                             | "object" -> name + "." + name
                             | t -> t
+                        IsStatic = (List.assoc "scope" o |> Json.asString) = "normal"
                     })
             Methods =
                 methods
@@ -178,6 +181,7 @@ module DetailsFile =
                             Name = name
                             Parameters = pars
                             ReturnType = ret
+                            IsStatic = (List.assoc "scope" o |> Json.asString) = "normal"
                         }
                     else None)
             Constructor = ctor
@@ -333,10 +337,14 @@ module Definition =
 
     let addMembers definedClasses (m: DetailsFile.Members) c =
         c
-        |+> Protocol (m.Properties |> List.choose (fun p ->
-            Some (p.Name =? resolveType definedClasses p.Type :> _)))
-        |+> Protocol (m.Methods |> List.choose (fun m ->
-            Some (makeFun definedClasses m.Name m.Parameters m.ReturnType |> fst :> _)))
+        |+> (m.Properties |> List.choose (fun p ->
+            let prop = p.Name =? resolveType definedClasses p.Type
+            prop.IsStatic <- p.IsStatic
+            Some (prop :> CodeModel.IClassMember)))
+        |+> (m.Methods |> List.choose (fun m ->
+            let meth = makeFun definedClasses m.Name m.Parameters m.ReturnType |> fst
+            meth.IsStatic <- m.IsStatic
+            Some (meth :> CodeModel.IClassMember)))
         |+> (m.Constructor |> Option.map (fun c ->
                 Constructor (fst (makeParameters definedClasses c)) :> CodeModel.IClassMember)
             |> Option.toList)
@@ -375,7 +383,9 @@ module Definition =
                         Pattern.Config (e.Name + ".Config") {
                             Required = []
                             Optional =
-                                e.Type.Members.Properties |> List.map (fun p ->
+                                e.Type.Members.Properties
+                                |> List.filter (fun p -> not p.IsStatic)
+                                |> List.map (fun p ->
                                     p.Name, resolveType definedClasses p.Type)
                         }
                     c

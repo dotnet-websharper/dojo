@@ -12,7 +12,7 @@ module Main =
     open IntelliFactory.WebSharper.Html
     open IntelliFactory.WebSharper.Dojo
 
-    type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory">
+    type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry">
 
     [<JavaScript>]
     let Samples () =
@@ -21,10 +21,11 @@ module Main =
         ]
         |>! OnAfterRender (fun div ->
             Req.Run(fun dojo ->
-                dojo.``dijit/form/CheckBox``(
-                    Dijit.Form.CheckBox.Config(
-                        Id = "myCheckbox"))
-                    .PlaceAt(div.Body, "first")
+                let cb =
+                    dojo.``dijit/form/CheckBox``(
+                        Dijit.Form.CheckBox.Config(
+                            Id = "myCheckbox"))
+                cb.PlaceAt(div.Body, "first")
                 |> ignore
                 dojo.``dijit/form/ComboBox``(
                     Dijit.Form.ComboBox.Config(
@@ -40,6 +41,8 @@ module Main =
                         Value = "Entry 2"))
                     .PlaceAt(div.Body, "last")
                 |> ignore
+                (dojo.``dijit/registry``.ById "myCheckbox" :?> Dijit.Form.CheckBox)
+                    .OnClick(fun (_:Dijit.Form.CheckBox) e -> JavaScript.Log e)
             )
         )
 

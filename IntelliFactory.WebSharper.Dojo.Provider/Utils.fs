@@ -13,6 +13,7 @@ let ( +/ ) a b = System.IO.Path.Combine(a, b)
 let inline ( @?> ) e t = Quotations.Expr.Coerce(e, t)
 
 let capitalize (s: string) = s.[0 .. 0].ToUpper() + s.[1 ..]
+let uncapitalize (s: string) = s.[0 .. 0].ToLower() + s.[1 ..]
 
 module Option =
     let defaultTo value option =
