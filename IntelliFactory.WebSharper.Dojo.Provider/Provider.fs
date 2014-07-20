@@ -17,7 +17,6 @@ module public Inlines =
     [<Inline "$tuple[$idx][$propName]">]
     let TupleInvokeGet (tuple: 'a) (idx: int) (propName: string) = X<'b>
 
-
     [<Inline "$tuple[$idx][$methodName].apply($tuple[$idx], $args)">]
     let TupleInvokeMethod (tuple: 'a) (idx: int) (methodName: string) (args: obj[]) = X<'b>
 
@@ -26,6 +25,9 @@ module public Inlines =
 
     [<Inline "$func($arg)">]
     let InvokeFunc (func: obj) (arg: obj) = X<obj>
+
+    [<Inline "$obj[$field]">]
+    let GetField (obj: obj) (field: string) = X<obj>
 
 open Inlines
 
@@ -183,19 +185,35 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                         try findDojoClass name
                         with _ -> typeof<obj>
 
-                    xml.Root.Element(xn"body").Descendants()
-                    |> Seq.choose (fun e ->
-                        let idAttr = e.Attribute(xn"id")
-                        let dojoTypeAttr = e.Attribute(xn"data-dojo-type")
-                        if idAttr <> null && dojoTypeAttr <> null then
-                            Some (idAttr.Value, dojoTypeAttr.Value)
-                        else None     
+                    let widgets =
+                        xml.Root.Element(xn"body").Descendants()
+                        |> Seq.choose (fun e ->
+                            let idAttr = e.Attribute(xn"id")
+                            let dojoTypeAttr = e.Attribute(xn"data-dojo-type")
+                            if idAttr <> null && dojoTypeAttr <> null then
+                                Some (idAttr.Value, dojoTypeAttr.Value)
+                            else None     
+                        )
+                        |> List.ofSeq
+                    
+                    let widgetQueries byId =
+                        Quotations.Expr.NewArray(
+                            typeof<string * obj>,
+                            widgets |> List.map (fun (i, _) -> <@@ i, InvokeFunc %%(byId @?> objTy) i @@>)
+                        )
+                        @?> typeof<seq<string * obj>>
+
+                    ty.AddMember <| ProvidedConstructor([ ProvidedParameter("byId", byIdTy) ]
+                    ,   InvokeCode = fun [ byId ] -> <@@ New %%(widgetQueries byId) @@> @?> ty
                     )
-                    |> Seq.iter (fun (i, t) ->
-                        let returnTy = findDojoClass t
-                        ty.AddMember <| ProvidedMethod(i, [ ProvidedParameter("byId", byIdTy) ], returnTy, IsStaticMethod = true
-                        ,   InvokeCode = fun [ byId ] -> <@@ InvokeFunc %%(byId @?> objTy) i @@> @?> returnTy   
-                        ) 
+                    
+                    ty.AddMembers (
+                        widgets |> List.map (fun (i, t) ->
+                            let t = findDojoClass t
+                            ProvidedProperty(i, t
+                            ,   GetterCode = fun [ this ] -> <@@ GetField %%(this @?> objTy) i @@> @?> t
+                            )
+                        )
                     )
 
                     ty
