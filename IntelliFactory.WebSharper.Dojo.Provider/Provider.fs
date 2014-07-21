@@ -87,7 +87,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                         |> Array.map (fun s -> s.Trim())
                     let members =
                         requires
-                        |> Array.filter (fun s -> not (s.EndsWith("!"))) // filters requires such as dojo/domReady!
+                        |> Array.filter (fun s -> not (s.Contains("!"))) // filters requires such as dojo/domReady! or dojo/query!css3
                         |> Array.mapi (fun i require ->
                             let ``type`` = findDojoClass require
                             let methods =
@@ -118,7 +118,10 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                                 InvokeCode = fun (this :: args) ->
                                                     let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
                                                     let n = uncapitalize m.Name
-                                                    <@@ Inlines.TupleInvokeMethod (%%this) i n (%%args : obj[]) @@> @?> ``type``))
+                                                    if m.Name = "Invoke" then
+                                                        <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``
+                                                    else
+                                                        <@@ Inlines.TupleInvokeMethod (%%this) i n (%%args : obj[]) @@> @?> ``type``))
                                         |> List.ofSeq
                                     let ps =
                                         ``type``.GetProperties()

@@ -12,7 +12,7 @@ module Main =
     open IntelliFactory.WebSharper.Html
     open IntelliFactory.WebSharper.Dojo
 
-    type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry, dojo/domReady!">
+    type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry, dojo/on, dojo/domReady!">
 
 //    type App = XHtml<"Test.html">
 
@@ -45,6 +45,7 @@ module Main =
                 |> ignore
                 (d.``dijit/registry``.ById "myCheckbox" :?> dijit.form.CheckBox)
                     .OnClick(fun (_:dijit.form.CheckBox) e -> JavaScript.Log e)
+                d.``dojo/on``.Invoke(cb, "click", (fun () -> JavaScript.Log "with dojo/on"), null) |> ignore
 //                let byId (s: string) = d.``dijit/registry``.ById s
 //                byId |> App.newProjectDialog |> ignore
             )
