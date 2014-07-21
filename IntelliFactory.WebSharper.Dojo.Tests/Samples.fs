@@ -44,7 +44,7 @@ module Main =
                     .PlaceAt(div.Body, "last")
                 |> ignore
                 (d.``dijit/registry``.ById "myCheckbox" :?> dijit.form.CheckBox)
-                    .OnClick(fun (_:dijit.form.CheckBox) e -> JavaScript.Log e)
+                    .OnClick(fun (_:dijit.form.CheckBox) e -> JavaScript.Log e) |> ignore
                 d.``dojo/on``.Invoke(cb, "click", (fun () -> JavaScript.Log "with dojo/on"), null) |> ignore
 //                let byId (s: string) = d.``dijit/registry``.ById s
 //                byId |> App.newProjectDialog |> ignore

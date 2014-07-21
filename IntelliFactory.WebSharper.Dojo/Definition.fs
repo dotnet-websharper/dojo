@@ -353,6 +353,26 @@ module Definition =
                 Constructor (fst (makeParameters definedClasses c)) :> CodeModel.IClassMember)
             |> Option.toList)
 
+    module Hardcoded =
+
+        let AMD =
+            Class "AMD"
+            |+> [
+                Generic - fun t -> "require" => T<string[]>?requires * (t ^-> T<unit>)?callback ^-> T<unit>
+                |> WithInline "$global.require($requires, $global.IntelliFactory.Runtime.Tupled($callback))"
+            ]
+
+        let Handler =
+            Class "Handler"
+            |+> [
+                "remove" => T<unit -> unit>
+            ]
+
+        let Classes : CodeModel.NamespaceEntity list =
+            [
+                AMD
+            ]
+
     let rootElements =
         let classes =
             DetailsFile.rootElements
@@ -412,26 +432,12 @@ module Definition =
                     let eventArgs = makeParameters definedClasses ev.Parameters |> fst
                     let callback = c -* eventArgs ^-> T<unit>
                     [
-                        ev.Name => callback?callback ^-> T<unit>
+                        ev.Name => callback?callback ^-> Hardcoded.Handler
                         |> WithInline ("$this.on('" + eventName + "', $callback)")
                     ]))
             c, e.QualName)
         |> toNested
         |> List.map (fun c -> c :> CodeModel.NamespaceEntity)
-
-    module Hardcoded =
-
-        let AMD =
-            Class "AMD"
-            |+> [
-                Generic - fun t -> "require" => T<string[]>?requires * (t ^-> T<unit>)?callback ^-> T<unit>
-                |> WithInline "$global.require($requires, $global.IntelliFactory.Runtime.Tupled($callback))"
-            ]
-
-        let Classes : CodeModel.NamespaceEntity list =
-            [
-                AMD
-            ]
 
     let Assembly =
         Assembly [
