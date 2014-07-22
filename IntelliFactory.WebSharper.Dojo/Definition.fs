@@ -364,7 +364,7 @@ module Definition =
 
         let DojoHandler =
             Class "DojoHandler"
-            |+> [
+            |+> Protocol [
                 "remove" => T<unit -> unit>
             ]
 
