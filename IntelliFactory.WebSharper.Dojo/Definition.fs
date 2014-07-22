@@ -362,8 +362,8 @@ module Definition =
                 |> WithInline "$global.require($requires, $global.IntelliFactory.Runtime.Tupled($callback))"
             ]
 
-        let Handler =
-            Class "Handler"
+        let DojoHandler =
+            Class "DojoHandler"
             |+> [
                 "remove" => T<unit -> unit>
             ]
@@ -371,6 +371,7 @@ module Definition =
         let Classes : CodeModel.NamespaceEntity list =
             [
                 AMD
+                DojoHandler
             ]
 
     let rootElements =
@@ -432,7 +433,7 @@ module Definition =
                     let eventArgs = makeParameters definedClasses ev.Parameters |> fst
                     let callback = c -* eventArgs ^-> T<unit>
                     [
-                        ev.Name => callback?callback ^-> Hardcoded.Handler
+                        ev.Name => callback?callback ^-> Hardcoded.DojoHandler
                         |> WithInline ("$this.on('" + eventName + "', $callback)")
                     ]))
             c, e.QualName)
