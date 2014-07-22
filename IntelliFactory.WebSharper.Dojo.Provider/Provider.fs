@@ -103,8 +103,8 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                             let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
                                             <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``))
                             let types, extraMethods =
-                                let meths = ``type``.GetMethods()
-                                if (meths |> Seq.exists (fun m -> m.IsStatic)) then
+                                let meths = ``type``.GetMethods(BindingFlags.Static ||| BindingFlags.Public)
+                                if not (Seq.isEmpty meths) then
                                     let ms =
                                         meths
                                         |> Seq.filter (fun m -> not m.IsSpecialName) // remove property getters/setters
@@ -124,7 +124,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                                         <@@ Inlines.TupleInvokeMethod (%%this) i n (%%args : obj[]) @@> @?> ``type``))
                                         |> List.ofSeq
                                     let ps =
-                                        ``type``.GetProperties()
+                                        ``type``.GetProperties(BindingFlags.Static ||| BindingFlags.Public)
                                         |> Seq.map (fun p ->
                                             ProvidedProperty(p.Name, p.PropertyType,
                                                 GetterCode = fun [this] ->
