@@ -391,9 +391,9 @@ module Definition =
                             let l =
                                 argNames
                                 |> String.concat ", $"
-                            "$this(" + (if List.isEmpty argNames then "" else "$") + l + ")"
+                            c.Name + "(" + (if List.isEmpty argNames then "" else "$") + l + ")"
                         f |> WithInline fInline
-                    c |+> Protocol [invoke]
+                    c |+> [invoke]
                 | None -> c
             let c =
                 match e.Type.Superclass with
