@@ -186,18 +186,23 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
 
                     let findDojoClass name =
                         try findDojoClass name
-                        with _ -> typeof<obj>
+                        with _ -> objTy
 
-                    let widgets =
+                    let ids =
                         xml.Root.Element(xn"body").Descendants()
                         |> Seq.choose (fun e ->
                             let idAttr = e.Attribute(xn"id")
-                            let dojoTypeAttr = e.Attribute(xn"data-dojo-type")
-                            if idAttr <> null && dojoTypeAttr <> null then
-                                Some (idAttr.Value, dojoTypeAttr.Value)
-                            else None     
+                            if idAttr <> null then
+                                Some(
+                                    idAttr.Value,
+                                    let dojoTypeAttr = e.Attribute(xn"data-dojo-type")
+                                    if dojoTypeAttr <> null then Some dojoTypeAttr.Value else None
+                                ) 
+                            else None
                         )
                         |> List.ofSeq
+                    
+                    let widgets = ids |> List.choose (function (i, Some t) -> Some(i, t) | _ -> None)
                     
                     let widgetQueries byId =
                         Quotations.Expr.NewArray(
@@ -215,6 +220,19 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                             let t = findDojoClass t
                             ProvidedProperty(i, t
                             ,   GetterCode = fun [ this ] -> <@@ GetField %%(this @?> objTy) i @@> @?> t
+                            )
+                        )
+                    )
+
+                    let jqTy = ProvidedTypeDefinition("JQuery", None)
+
+                    ty.AddMember jqTy
+
+                    jqTy.AddMembers (
+                        ids |> List.map (fun (i, _) ->
+                            let hi = "#" + i
+                            ProvidedProperty(i, typeof<JQuery.JQuery>, IsStatic = true
+                            ,   GetterCode = fun [] -> <@@ JQuery.JQuery.Of hi @@>    
                             )
                         )
                     )
