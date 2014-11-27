@@ -1,3 +1,6 @@
 <ivy-module version="2.0">
-  <info organisation="IntelliFactory" module="websharper.senchaui" revision="2.5" />
+  <info organisation="IntelliFactory" module="websharper.dojo" revision="2.5" />
+  <dependencies>
+    <dependency name="websharper" rev="latest.integration" />
+  </dependencies>
 </ivy-module>
