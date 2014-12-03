@@ -3,7 +3,7 @@
 open IntelliFactory.Build
 
 let bt =
-    let bt = BuildTool().PackageId("WebSharper.Dojo", "2.5")
+    let bt = BuildTool().PackageId("WebSharper.Dojo", "3.0-alpha")
     bt.WithFramework(bt.Framework.Net40)
 
 let library =
@@ -35,7 +35,7 @@ bt.Solution [
     typeProvider
     tests
 
-    bt.PackageId("WebSharper.Dojo", "2.5").NuGet.CreatePackage()
+    bt.NuGet.CreatePackage()
         .Description("WebSharper extension for Dojo Toolkit")
         .Add(library)
         .Add(typeProvider)
