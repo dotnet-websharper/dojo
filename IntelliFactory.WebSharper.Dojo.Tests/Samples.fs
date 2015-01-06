@@ -9,7 +9,8 @@ module Inlines =
     let require (args: string[]) (callback: 'a -> unit) = ()
 
 module Main =
-    open IntelliFactory.WebSharper.Html
+    open IntelliFactory.WebSharper.JavaScript
+    open IntelliFactory.WebSharper.Html.Client
     open IntelliFactory.WebSharper.Dojo
 
     type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry, dojo/on, dojo/domReady!">
@@ -27,7 +28,7 @@ module Main =
                     d.``dijit/form/CheckBox``(
                         dijit.form.CheckBox.Config(
                             Id = "myCheckbox"))
-                cb.PlaceAt(div.Body, "first")
+                cb.PlaceAt(div.Dom, "first")
                 |> ignore
                 d.``dijit/form/ComboBox``(
                     dijit.form.ComboBox.Config(
@@ -41,7 +42,7 @@ module Main =
                                             New ["name" => "Entry 3"; "id" => 3]
                                         |])),
                         Value = "Entry 2"))
-                    .PlaceAt(div.Body, "last")
+                    .PlaceAt(div.Dom, "last")
                 |> ignore
                 (d.``dijit/registry``.ById "myCheckbox" :?> dijit.form.CheckBox)
                     .OnClick(fun (_:dijit.form.CheckBox) e -> JavaScript.Log e) |> ignore
@@ -64,7 +65,7 @@ type Action = | Index
 
 module Site =
 
-    open IntelliFactory.Html
+    open IntelliFactory.WebSharper.Html.Server
 
     let HomePage =
         Content.PageContent <| fun ctx ->
