@@ -1,8 +1,6 @@
 ﻿namespace IntelliFactory.WebSharper.DojoExtension
 
-open IntelliFactory.WebSharper.Dom
-open IntelliFactory.WebSharper.Html5
-open IntelliFactory.WebSharper.Html5.WebGL
+open IntelliFactory.WebSharper
 
 [<AutoOpen>]
 module Pervasives =
@@ -278,7 +276,7 @@ module Res =
 
 module Definition =
 
-    open IntelliFactory.WebSharper.Dom
+    open IntelliFactory.WebSharper.JavaScript.Dom
 
     let resolveType definedClasses (s: string) =
         match s.ToLower() with
