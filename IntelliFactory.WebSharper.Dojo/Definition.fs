@@ -338,31 +338,45 @@ module Definition =
         (name => argTypes ^-> resolveType definedClasses ret), argNames
 
     let addMembers definedClasses (m: DetailsFile.Members) c =
-        c
-        |+> (m.Properties |> List.choose (fun p ->
-            let prop = p.Name =? resolveType definedClasses p.Type
-            prop.IsStatic <- p.IsStatic
-            Some (prop :> CodeModel.IClassMember)))
-        |+> (m.Methods |> List.choose (fun m ->
-            let meth = makeFun definedClasses m.Name m.Parameters m.ReturnType |> fst
-            meth.IsStatic <- m.IsStatic
-            Some (meth :> CodeModel.IClassMember)))
-        |+> (m.Constructor |> Option.map (fun c ->
+        let staticP, instanceP =
+            m.Properties
+            |> List.map (fun p ->
+                let prop = p.Name =? resolveType definedClasses p.Type
+                prop :> CodeModel.IClassMember, p.IsStatic)
+            |> List.partition snd
+        let staticM, instanceM =
+            m.Methods
+            |> List.map (fun m ->
+                let meth = makeFun definedClasses m.Name m.Parameters m.ReturnType |> fst
+                meth :> CodeModel.IClassMember, m.IsStatic)
+            |> List.partition snd
+        let ctor =
+            m.Constructor |> Option.map (fun c ->
                 Constructor (fst (makeParameters definedClasses c)) :> CodeModel.IClassMember)
-            |> Option.toList)
+            |> Option.toList
+        c
+        |+> Static [
+            yield! List.map fst staticP
+            yield! List.map fst staticM
+            yield! ctor
+        ]
+        |+> Instance [
+            yield! List.map fst instanceP
+            yield! List.map fst instanceM
+        ]
 
     module Hardcoded =
 
         let AMD =
             Class "AMD"
-            |+> [
+            |+> Static [
                 Generic - fun t -> "require" => T<string[]>?requires * (t ^-> T<unit>)?callback ^-> T<unit>
                 |> WithInline "$global.require($requires, $global.IntelliFactory.Runtime.Tupled($callback))"
             ]
 
         let DojoHandler =
             Class "DojoHandler"
-            |+> Protocol [
+            |+> Instance [
                 "remove" => T<unit -> unit>
             ]
 
@@ -392,7 +406,7 @@ module Definition =
                                 |> String.concat ", $"
                             c.Name + "(" + (if List.isEmpty argNames then "" else "$") + l + ")"
                         f |> WithInline fInline
-                    c |+> [invoke]
+                    c |+> Static [invoke]
                 | None -> c
             let c =
                 match e.Type.Superclass with
@@ -413,14 +427,14 @@ module Definition =
                         }
                     c
                     |=> Nested [configObject]
-                    |+> [
+                    |+> Static [
                         Constructor configObject
                     ]
                 else c
             let c =
                 c
                 |> addMembers definedClasses e.Type.Members
-                |+> Protocol (e.Type.Events |> List.collect (fun ev ->
+                |+> Instance (e.Type.Events |> List.collect (fun ev ->
                     // event is either "onFooBar" or "_onFooBar";
                     // convert this to "fooBar" or "_foobar".
                     let eventName =
