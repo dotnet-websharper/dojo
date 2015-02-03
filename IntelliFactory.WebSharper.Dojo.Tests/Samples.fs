@@ -2,12 +2,6 @@
 
 open IntelliFactory.WebSharper
 
-[<AutoOpen>]
-module Inlines =
-
-    [<Inline "require($args, $callback)">]
-    let require (args: string[]) (callback: 'a -> unit) = ()
-
 module Main =
     open IntelliFactory.WebSharper.JavaScript
     open IntelliFactory.WebSharper.Html.Client
@@ -45,7 +39,7 @@ module Main =
                     .PlaceAt(div.Dom, "last")
                 |> ignore
                 (d.``dijit/registry``.ById "myCheckbox" :?> dijit.form.CheckBox)
-                    .OnClick(FuncWithThis<dijit.form.CheckBox,_>(fun _ (e: Dom.Event) -> Console.Log e)) |> ignore
+                    .OnClick(fun (_: dijit.form.CheckBox) (e: Dom.Event) -> Console.Log e) |> ignore
                 d.``dojo/on``.Invoke(cb, "click", (fun () -> Console.Log "with dojo/on"), null) |> ignore
 //                let byId (s: string) = d.``dijit/registry``.ById s
 //                byId |> App.newProjectDialog |> ignore

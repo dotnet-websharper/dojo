@@ -371,7 +371,7 @@ module Definition =
             Class "AMD"
             |+> Static [
                 Generic - fun t -> "require" => T<string[]>?requires * (t ^-> T<unit>)?callback ^-> T<unit>
-                |> WithInline "$global.require($requires, $global.IntelliFactory.Runtime.Tupled($callback))"
+                |> WithInline "$global.require($requires, $wsruntime.CreateFuncWithArgs(function(x){return $callback(x.length==1?x[0]:x)}))"
             ]
 
         let DojoHandler =
@@ -434,7 +434,7 @@ module Definition =
             let c =
                 c
                 |> addMembers definedClasses e.Type.Members
-                |+> Instance (e.Type.Events |> List.collect (fun ev ->
+                |+> Instance (e.Type.Events |> List.map (fun ev ->
                     // event is either "onFooBar" or "_onFooBar";
                     // convert this to "fooBar" or "_foobar".
                     let eventName =
@@ -443,11 +443,15 @@ module Definition =
                         else
                             ev.Name.[2..2].ToLower() + ev.Name.[3..]
                     let eventArgs = makeParameters definedClasses ev.Parameters |> fst
-                    let callback = c -* eventArgs ^-> T<unit>
-                    [
-                        ev.Name => callback?callback ^-> Hardcoded.DojoHandler
-                        |> WithInline ("$this.on('" + eventName + "', $callback)")
-                    ]))
+                    let callback = c ^-> eventArgs ^-> T<unit>
+                    let inl =
+                        if ev.Parameters.Length <= 1 then
+                            "$this.on('" + eventName + "', $wsruntime.CreateFuncWithThis($callback))"
+                        else "$this.on('" + eventName + "', $wsruntime.CreateFuncWithThisArgs($callback))"
+                    ev.Name => callback?callback ^-> Hardcoded.DojoHandler
+                    |> WithInline inl
+                    :> CodeModel.IClassMember
+                ))
             c, e.QualName)
         |> toNested
         |> List.map (fun c -> c :> CodeModel.NamespaceEntity)
