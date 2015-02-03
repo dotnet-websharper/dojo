@@ -442,14 +442,18 @@ module Definition =
                             "_" + ev.Name.[3..3].ToLower() + ev.Name.[4..]
                         else
                             ev.Name.[2..2].ToLower() + ev.Name.[3..]
-                    let eventArgs = makeParameters definedClasses ev.Parameters |> fst
-                    let callback = c ^-> eventArgs ^-> T<unit>
-                    let inl =
-                        if ev.Parameters.Length <= 1 then
-                            "$this.on('" + eventName + "', $wsruntime.CreateFuncWithThis($callback))"
-                        else "$this.on('" + eventName + "', $wsruntime.CreateFuncWithThisArgs($callback))"
+                    let eventArgs, wrapper =
+                        let oneArg (p: DetailsFile.Parameter) =
+                            p.Types
+                            |> List.map (resolveType definedClasses)
+                            |> List.reduce (+)
+                        match ev.Parameters with
+                        | [] -> T<unit>, "CreateFuncWithThis"
+                        | [p] -> oneArg p, "CreateFuncWithThis"
+                        | l -> List.reduce (*) (List.map oneArg l), "CreateFuncWithThisArgs"
+                    let callback = c ^-> eventArgs.Parameter ^-> T<unit>
                     ev.Name => callback?callback ^-> Hardcoded.DojoHandler
-                    |> WithInline inl
+                    |> WithInline ("$this.on('" + eventName + "', $wsruntime." + wrapper + "($callback))")
                     :> CodeModel.IClassMember
                 ))
             c, e.QualName)
