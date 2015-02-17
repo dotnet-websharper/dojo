@@ -319,7 +319,8 @@ module Definition =
                     eprintfn "Warning: several classes with the same name %s" parentName
                     c
             parent
-            |=> Nested (toNested (nested |> List.map (fun (c, q) -> c, List.tail q))))
+            |=> Nested (toNested (nested |> List.map (fun (c, q) -> c, List.tail q)))
+            :> CodeModel.TypeDeclaration)
         |> List.ofSeq
 
     let makeParameters definedClasses (pars: DetailsFile.Parameter list) =
