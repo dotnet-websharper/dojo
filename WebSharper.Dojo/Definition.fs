@@ -290,6 +290,7 @@ module Definition =
         | "void" -> T<unit>
         | "domnode" -> T<Node>
         | "domevent" | "event" -> T<Event>
+        | "function" -> T<JavaScript.Function>
         | _ ->
             match Map.tryFind s definedClasses with
             | None -> T<obj>
