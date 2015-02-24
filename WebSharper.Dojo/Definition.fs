@@ -1,6 +1,6 @@
-﻿namespace IntelliFactory.WebSharper.DojoExtension
+﻿namespace WebSharper.DojoExtension
 
-open IntelliFactory.WebSharper
+open WebSharper
 
 [<AutoOpen>]
 module Pervasives =
@@ -20,7 +20,7 @@ module List =
 
 module Json =
 
-    open IntelliFactory.WebSharper.Core
+    open WebSharper.Core
 
     let asString = function
         | Json.String s -> s
@@ -36,7 +36,7 @@ module Json =
 
 module DetailsFile =
 
-    open IntelliFactory.WebSharper.Core
+    open WebSharper.Core
 
     let jsonV =
         try
@@ -263,7 +263,7 @@ module DetailsFile =
         | _ ->
             fail "Parsed JSON is not an object"
 
-open IntelliFactory.WebSharper.InterfaceGenerator
+open WebSharper.InterfaceGenerator
 
 module Res =
 
@@ -276,7 +276,7 @@ module Res =
 
 module Definition =
 
-    open IntelliFactory.WebSharper.JavaScript.Dom
+    open WebSharper.JavaScript.Dom
 
     let resolveType definedClasses (s: string) =
         match s.ToLower() with
@@ -455,11 +455,11 @@ module Definition =
 
     let Assembly =
         Assembly [
-            Namespace "IntelliFactory.WebSharper.Dojo.Resources" [
+            Namespace "WebSharper.Dojo.Resources" [
                 Res.Config
                 Res.Js.AssemblyWide()
             ]
-            Namespace "IntelliFactory.WebSharper.Dojo" (Hardcoded.Classes @ rootElements)
+            Namespace "WebSharper.Dojo" (Hardcoded.Classes @ rootElements)
         ]
 
 [<Sealed>]

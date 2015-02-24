@@ -72,4 +72,4 @@ do
     //         CreateNoWindow = true)
     // use p = Process.Start(info)
     // p.WaitForExit()
-    // File.Copy(JsParseBase +/ "details.json", "IntelliFactory.WebSharper.Dojo" +/ "details.json")
+    // File.Copy(JsParseBase +/ "details.json", "WebSharper.Dojo" +/ "details.json")

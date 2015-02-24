@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module internal IntelliFactory.WebSharper.Dojo.Utils
+module internal WebSharper.Dojo.Utils
 
 let ( .- ) table key =
     try Map.find key table
@@ -31,7 +31,7 @@ module Option =
         | Some _ -> optionFrom
         | _ -> optionTo
 
-open IntelliFactory.WebSharper.Dojo.ProvidedTypes
+open WebSharper.Dojo.ProvidedTypes
 
 type ProvidedTypeDefinition with
 

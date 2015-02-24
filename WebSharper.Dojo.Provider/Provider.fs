@@ -1,4 +1,4 @@
-﻿namespace IntelliFactory.WebSharper.Dojo
+﻿namespace WebSharper.Dojo
 
 open System
 open System.IO
@@ -7,11 +7,11 @@ open System.Xml.Linq
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Core.CompilerServices
-open IntelliFactory.WebSharper
-open IntelliFactory.WebSharper.JavaScript
+open WebSharper
+open WebSharper.JavaScript
 
 
-open IntelliFactory.WebSharper.Dojo.ProvidedTypes
+open WebSharper.Dojo.ProvidedTypes
 
 module public Inlines =
 
@@ -50,7 +50,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
             refAssembly <| AssemblyName(args.Name).Name
         )
          
-    let rootNamespace = "IntelliFactory.WebSharper.Dojo"
+    let rootNamespace = "WebSharper.Dojo"
 
     let objTy = typeof<obj>
 

@@ -1,11 +1,11 @@
-﻿namespace IntelliFactory.WebSharper.Dojo.Tests
+﻿namespace WebSharper.Dojo.Tests
 
-open IntelliFactory.WebSharper
+open WebSharper
 
 module Main =
-    open IntelliFactory.WebSharper.JavaScript
-    open IntelliFactory.WebSharper.Html.Client
-    open IntelliFactory.WebSharper.Dojo
+    open WebSharper.JavaScript
+    open WebSharper.Html.Client
+    open WebSharper.Dojo
 
     type Req = Require<"dijit/form/ComboBox, dijit/form/CheckBox, dojo/store/Memory, dijit/registry, dojo/on, dojo/domReady!">
 
@@ -40,7 +40,7 @@ module Main =
                 |> ignore
                 (d.``dijit/registry``.ById "myCheckbox" :?> dijit.form.CheckBox)
                     .OnClick(fun (_: dijit.form.CheckBox) (e: Dom.Event) -> Console.Log e) |> ignore
-                d.``dojo/on``.Invoke(cb, "click", (fun () -> Console.Log "with dojo/on"), null) |> ignore
+                d.``dojo/on``.Invoke(cb, "click", As<Function>(fun () -> Console.Log "with dojo/on"), null) |> ignore
 //                let byId (s: string) = d.``dijit/registry``.ById s
 //                byId |> App.newProjectDialog |> ignore
             )
@@ -53,13 +53,13 @@ type Samples() =
     override this.Body = Main.Samples() :> _
 
 
-open IntelliFactory.WebSharper.Sitelets
+open WebSharper.Sitelets
 
 type Action = | Index
 
 module Site =
 
-    open IntelliFactory.WebSharper.Html.Server
+    open WebSharper.Html.Server
 
     let HomePage =
         Content.PageContent <| fun ctx ->

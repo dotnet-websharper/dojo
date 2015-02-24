@@ -7,12 +7,12 @@ let bt =
     bt.WithFramework(bt.Framework.Net40)
 
 let library =
-    bt.WebSharper.Extension("IntelliFactory.WebSharper.Dojo")
+    bt.WebSharper.Extension("WebSharper.Dojo")
         .SourcesFromProject()
         .Embed(["dojo-config.js"])
 
 let typeProvider =
-    bt.WebSharper.Library("IntelliFactory.WebSharper.Dojo.Provider")
+    bt.WebSharper.Library("WebSharper.Dojo.Provider")
         .SourcesFromProject()
         .References(fun r ->
             [
@@ -22,7 +22,7 @@ let typeProvider =
             ])
 
 let tests =
-    bt.WebSharper.HtmlWebsite("IntelliFactory.WebSharper.Dojo.Tests")
+    bt.WebSharper.HtmlWebsite("WebSharper.Dojo.Tests")
         .SourcesFromProject()
         .References(fun r ->
             [
