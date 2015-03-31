@@ -157,8 +157,8 @@ module DetailsFile =
             Properties =
                 defaultArg (List.tryAssoc "properties" props) (Json.Array [])
                 |> Json.asArray
-                |> List.filter (not << isPrivate)
-                |> List.map (Json.asObject >> fun o ->
+                |> Seq.filter (not << isPrivate)
+                |> Seq.map (Json.asObject >> fun o ->
                     let name = List.assoc "name" o |> Json.asString
                     {
                         Name = name
@@ -168,6 +168,8 @@ module DetailsFile =
                             | t -> t
                         IsStatic = (List.assoc "scope" o |> Json.asString) = "normal"
                     })
+                |> Seq.distinctBy (fun p -> p.Name)
+                |> List.ofSeq
             Methods =
                 methods
                 |> List.filter (not << isPrivate)
