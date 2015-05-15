@@ -3,8 +3,9 @@
 open IntelliFactory.Build
 
 let bt =
-    let bt = BuildTool().PackageId("WebSharper.Dojo", "3.0")
-    bt.WithFramework(bt.Framework.Net40)
+    BuildTool().PackageId("WebSharper.Dojo")
+        .VersionFrom("WebSharper")
+        .WithFramework(fun fw -> fw.Net40)
 
 let library =
     bt.WebSharper.Extension("WebSharper.Dojo")
