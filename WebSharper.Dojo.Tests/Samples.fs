@@ -61,15 +61,15 @@ module Site =
 
     open WebSharper.Html.Server
 
-    let HomePage =
-        Content.PageContent <| fun ctx ->
-            { Page.Default with
-                Head =
-                    [
-                        Link [Rel "stylesheet"; HRef "http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dijit/themes/claro/claro.css"]
-                    ]
-                Title = Some "WebSharper Dojo Tests"
-                Body = [Div [new Samples()]] }
+    let HomePage ctx =
+        Content.Page(
+            Head =
+                [
+                    Link [Rel "stylesheet"; HRef "http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dijit/themes/claro/claro.css"]
+                ],
+            Title = "WebSharper Dojo Tests",
+            Body = [Div [new Samples()]]
+        )
 
     let Main = Sitelet.Content "/" Index HomePage
 
