@@ -30,6 +30,7 @@ let tests =
             [
                 r.Project library
                 r.Project typeProvider
+                r.NuGet("WebSharper.Html").Reference()
             ])
 
 bt.Solution [
