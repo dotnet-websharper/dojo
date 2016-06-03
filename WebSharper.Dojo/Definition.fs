@@ -107,11 +107,27 @@ module DetailsFile =
             Parameters : Parameter list
         }
 
+    let normalizeType (t: string) =
+        match t.ToLower() with
+        | "undefined" 
+        | "object" -> "object"
+        | "string" -> "string"
+        | "integer" | "int" -> "int"
+        | "number" -> "number"
+        | "boolean" -> "boolean"
+        | "array" -> "array"
+        | "void" -> "void"
+        | "domnode" -> "domnode"
+        | "domevent" | "event" -> "event"
+        | "function" -> "function" 
+        | _ -> t
+
     let typeOfArr x =
         match x |> Json.asArray with
         | [] -> "void"
         | Json.String x :: _ -> x
         | _ -> "undefined"
+        |> normalizeType
 
     let isPrivate o =
         match List.tryAssoc "tags" (Json.asObject o) with
@@ -128,7 +144,7 @@ module DetailsFile =
             | Json.Object p ->
                 {
                     Name = List.assoc "name" p |> Json.asString
-                    Types = List.assoc "types" p |> Json.asArray |> List.map Json.asString
+                    Types = List.assoc "types" p |> Json.asArray |> List.map (Json.asString >> normalizeType)
                     Required = (List.assoc "usage" p |> Json.asString) = "required"
                 }
             | _ -> fail "%s parameters is not an object" name)
