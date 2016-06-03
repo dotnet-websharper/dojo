@@ -122,6 +122,9 @@ module DetailsFile =
         | "function" -> "function" 
         | _ -> t
 
+    let capitalize (s: string) =
+        if System.String.IsNullOrEmpty s then s else s.[0 .. 0].ToUpper() + s.[1 ..]
+
     let typeOfArr x =
         match x |> Json.asArray with
         | [] -> "void"
@@ -200,7 +203,7 @@ module DetailsFile =
                             IsStatic = (List.assoc "scope" o |> Json.asString) = "normal"
                         }
                     else None)
-                |> Seq.groupBy (fun m -> m.Name, m.Parameters |> List.map (fun p -> p.Types), m.ReturnType)
+                |> Seq.groupBy (fun m -> capitalize m.Name, m.Parameters |> List.map (fun p -> p.Types), m.ReturnType)
                 |> Seq.collect (fun (_, g) ->
                     if Seq.length g = 1 then g else
                         g |> Seq.distinctBy (fun m -> m.IsStatic)
