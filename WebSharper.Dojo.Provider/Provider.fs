@@ -45,13 +45,9 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
 
     let refAssembly name =
         cfg.ReferencedAssemblies
-        |> Seq.map (fun an -> Assembly.LoadFrom an)
+        |> Seq.map (fun an -> Assembly.ReflectionOnlyLoadFrom an)
         |> Seq.tryFind (fun a -> name = a.GetName().Name)
         |> Option.defaultTo null
-
-    do  System.AppDomain.CurrentDomain.add_AssemblyResolve(fun _ args ->
-            refAssembly <| AssemblyName(args.Name).Name
-        )
          
     let rootNamespace = "WebSharper.Dojo"
 
