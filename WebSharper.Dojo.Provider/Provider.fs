@@ -30,6 +30,9 @@ module public Inlines =
     [<Inline "$obj[$field]">]
     let GetField (obj: obj) (field: string) = X<obj>
 
+    [<JavaScript; Inline>]
+    let Require requires (fn: obj -> unit) = AMD.Require(requires, fun o -> fn o)
+
 open Inlines
 
 #nowarn "25"
@@ -157,7 +160,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                             ProvidedMethod("Run", [ProvidedParameter("function", runCallbackType)], typeof<unit>,
                                 IsStaticMethod = true,
                                 InvokeCode = fun [fn] ->
-                                    <@@ AMD.Require(requires, (%%fn)) @@> @?> typeof<unit>)
+                                    <@@ Inlines.Require requires (%%fn) @@> @?> typeof<unit>)
                         )
                 | _ -> failwith "Unexpected parameter values")
         
