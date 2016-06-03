@@ -11,11 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		ivy.xml = ivy.xml
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Dojo", "IntelliFactory.WebSharper.Dojo\IntelliFactory.WebSharper.Dojo.fsproj", "{730AE40A-001C-4137-972D-898DC7C2BF0A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.Dojo", "WebSharper.Dojo\WebSharper.Dojo.fsproj", "{730AE40A-001C-4137-972D-898DC7C2BF0A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Dojo.Provider", "IntelliFactory.WebSharper.Dojo.Provider\IntelliFactory.WebSharper.Dojo.Provider.fsproj", "{EF4A245F-14F1-418A-AB92-E9658DDBEE72}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.Dojo.Provider", "WebSharper.Dojo.Provider\WebSharper.Dojo.Provider.fsproj", "{EF4A245F-14F1-418A-AB92-E9658DDBEE72}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Dojo.Tests", "IntelliFactory.WebSharper.Dojo.Tests\IntelliFactory.WebSharper.Dojo.Tests.fsproj", "{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.Dojo.Tests", "WebSharper.Dojo.Tests\WebSharper.Dojo.Tests.fsproj", "{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

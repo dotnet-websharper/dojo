@@ -172,8 +172,8 @@ module DetailsFile =
                 |> List.ofSeq
             Methods =
                 methods
-                |> List.filter (not << isPrivate)
-                |> List.choose (Json.asObject >> fun o ->
+                |> Seq.filter (not << isPrivate)
+                |> Seq.choose (Json.asObject >> fun o ->
                     let name = List.assoc "name" o |> Json.asString
                     if isValid name then
                         let pars, ret = getParamsAndReturns name o
@@ -184,6 +184,13 @@ module DetailsFile =
                             IsStatic = (List.assoc "scope" o |> Json.asString) = "normal"
                         }
                     else None)
+                |> Seq.groupBy (fun m -> m.Name, m.Parameters |> List.map (fun p -> p.Types), m.ReturnType)
+                |> Seq.collect (fun (_, g) ->
+                    if Seq.length g = 1 then g else
+                        g |> Seq.distinctBy (fun m -> m.IsStatic)
+                        |> Seq.map (fun m -> if m.IsStatic then { m with Name = m.Name + "S" } else m)
+                )
+                |> List.ofSeq
             Constructor = ctor
         }
 
