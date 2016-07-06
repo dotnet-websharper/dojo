@@ -161,28 +161,37 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                 | _ -> failwith "Unexpected parameter values")
         
         xhtmlTy.DefineStaticParameters(
-            [ProvidedStaticParameter("path", typeof<string>)],
+            [ProvidedStaticParameter("pathOrXml", typeof<string>)],
             fun typename pars ->
                 match pars with
-                | [| :? string as path |] ->
+                | [| :? string as pathOrXml |] ->
                     let ty = ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
 
-                    let htmlFile = 
-                        if Path.IsPathRooted path then path 
-                        else cfg.ResolutionFolder +/ path
+                    let xml =
+                        if pathOrXml.Contains("<") then
+                            if watcher <> null then 
+                                watcher.Dispose()
+                                watcher <- null
 
-                    if cfg.IsInvalidationSupported then
-                        if watcher <> null then 
-                            watcher.Dispose()
-                        watcher <- 
-                            new FileSystemWatcher(Path.GetDirectoryName htmlFile, Path.GetFileName htmlFile, 
-                                EnableRaisingEvents = true,
-                                NotifyFilter = (NotifyFilters.LastWrite ||| NotifyFilters.Security)
-                            )
-                        watcher.Changed.Add <| fun _ -> 
-                            this.Invalidate()
-                    
-                    let xml = XDocument.Parse(File.ReadAllText htmlFile)
+                            XDocument.Parse pathOrXml    
+                        else 
+                            let htmlFile = 
+                                if Path.IsPathRooted pathOrXml then pathOrXml 
+                                else cfg.ResolutionFolder +/ pathOrXml
+
+                            if cfg.IsInvalidationSupported then
+                                if watcher <> null then watcher.Dispose()
+                                watcher <-
+                                    new FileSystemWatcher(Path.GetDirectoryName htmlFile, Path.GetFileName htmlFile, 
+                                        NotifyFilter = (NotifyFilters.LastWrite ||| NotifyFilters.Security ||| NotifyFilters.FileName)
+                                    )
+                                watcher.Changed.Add <| fun _ -> this.Invalidate()
+                                watcher.Deleted.Add <| fun _ -> this.Invalidate()
+                                watcher.Renamed.Add <| fun _ -> this.Invalidate()
+                                watcher.Created.Add <| fun _ -> this.Invalidate()
+                                watcher.EnableRaisingEvents <- true
+
+                            XDocument.Parse(File.ReadAllText htmlFile)
 
                     let xn n = XName.Get n
 
