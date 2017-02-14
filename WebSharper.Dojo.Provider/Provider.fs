@@ -10,9 +10,6 @@ open Microsoft.FSharp.Core.CompilerServices
 open WebSharper
 open WebSharper.JavaScript
 
-
-open WebSharper.Dojo.ProvidedTypes
-
 module public Inlines =
 
     [<Inline "$tuple[$idx][$propName]">]
@@ -37,24 +34,25 @@ open Inlines
 
 #nowarn "25"
 
+open ProviderImplementation.ProvidedTypes
+open ProviderImplementation
+
 [<TypeProvider>]
 type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces()
 
+    let ctx =
+        try ProvidedTypesContext.Create(cfg)
+        with _ -> ProvidedTypesContext(List.ofArray cfg.ReferencedAssemblies)
+
     let thisAssembly = Assembly.GetExecutingAssembly()
 
-    let refAssembly name =
-        cfg.ReferencedAssemblies
-        |> Seq.map (fun an -> Assembly.ReflectionOnlyLoadFrom an)
-        |> Seq.tryFind (fun a -> name = a.GetName().Name)
-        |> Option.defaultTo null
-         
     let rootNamespace = "WebSharper.Dojo"
 
     let objTy = typeof<obj>
 
-    let requireTy = ProvidedTypeDefinition(thisAssembly, rootNamespace, "Require", None)
-    let xhtmlTy = ProvidedTypeDefinition(thisAssembly, rootNamespace, "XHtml", None)
+    let requireTy = ctx.ProvidedTypeDefinition(thisAssembly, rootNamespace, "Require", None)
+    let xhtmlTy = ctx.ProvidedTypeDefinition(thisAssembly, rootNamespace, "XHtml", None)
 
     let mutable watcher: FileSystemWatcher = null
 
@@ -78,7 +76,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
 
     do
         requireTy.DefineStaticParameters(
-            [ProvidedStaticParameter("requires", typeof<string>)],
+            [ctx.ProvidedStaticParameter("requires", typeof<string>)],
             fun typename pars ->
                 match pars with
                 | [| :? string as requires |] ->
@@ -96,12 +94,11 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                     let pars =
                                         m.GetParameters()
                                         |> Seq.map (fun par ->
-                                            ProvidedParameter(par.Name, par.ParameterType))
+                                            ctx.ProvidedParameter(par.Name, par.ParameterType))
                                         |> List.ofSeq
-                                    ProvidedMethod(require, pars, ``type``,
-                                        InvokeCode = fun (this :: args) ->
-                                            let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
-                                            <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``))
+                                    ctx.ProvidedMethod(require, pars, ``type``, fun (this :: args) ->
+                                        let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
+                                        <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``))
                             let types, extraMethods =
                                 let meths = ``type``.GetMethods(BindingFlags.Static ||| BindingFlags.Public)
                                 if not (Seq.isEmpty meths) then
@@ -112,32 +109,27 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                             let pars =
                                                 m.GetParameters()
                                                 |> Seq.map (fun par ->
-                                                    ProvidedParameter(par.Name, par.ParameterType))
+                                                    ctx.ProvidedParameter(par.Name, par.ParameterType))
                                                 |> List.ofSeq
-                                            ProvidedMethod(m.Name, pars, m.ReturnType,
-                                                InvokeCode = fun (this :: args) ->
-                                                    let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
-                                                    let n = uncapitalize m.Name
-                                                    if m.Name = "Invoke" then
-                                                        <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``
-                                                    else
-                                                        <@@ Inlines.TupleInvokeMethod (%%this) i n (%%args : obj[]) @@> @?> ``type``))
+                                            ctx.ProvidedMethod(m.Name, pars, m.ReturnType, fun (this :: args) ->
+                                                let args = Expr.NewArray(objTy, args |> List.map (fun e -> e @?> objTy))
+                                                let n = uncapitalize m.Name
+                                                if m.Name = "Invoke" then
+                                                    <@@ Inlines.TupleInvoke (%%this) i (%%args : obj[]) @@> @?> ``type``
+                                                else
+                                                    <@@ Inlines.TupleInvokeMethod (%%this) i n (%%args : obj[]) @@> @?> ``type``))
                                         |> List.ofSeq
                                     let ps =
                                         ``type``.GetProperties(BindingFlags.Static ||| BindingFlags.Public)
                                         |> Seq.map (fun p ->
-                                            ProvidedProperty(p.Name, p.PropertyType,
-                                                GetterCode = fun [this] ->
-                                                    let n = uncapitalize p.Name
-                                                    <@@ Inlines.TupleInvokeGet (%%this) i n @@> @?> ``type``))
+                                            ctx.ProvidedProperty(p.Name, p.PropertyType, fun [this] ->
+                                                let n = uncapitalize p.Name
+                                                <@@ Inlines.TupleInvokeGet (%%this) i n @@> @?> ``type``))
                                         |> List.ofSeq
-                                    let t =
-                                        ProvidedTypeDefinition(require, None)
-                                            .WithMembers(ms)
-                                            .WithMembers(ps)
-                                    let m =
-                                        ProvidedProperty(require, t,
-                                            GetterCode = fun [this] -> this @?> ``type``)
+                                    let t = ctx.ProvidedTypeDefinition(require, None)
+                                    t.AddMembers(ms)
+                                    t.AddMembers(ps)
+                                    let m = ctx.ProvidedProperty(require, t, fun [this] -> this @?> ``type``)
                                     [t], [|m|]
                                 else [], [||]
                             [
@@ -145,27 +137,28 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                 yield! Seq.cast<MemberInfo> methods
                                 yield! Seq.cast<MemberInfo> extraMethods
                             ])
-                    let argsType = ProvidedTypeDefinition("Requires", None)
+                    let argsType = ctx.ProvidedTypeDefinition("Requires", None)
                     for membs in members do
                         for m in membs do
                             argsType.AddMember(m)
                     let runCallbackType = FSharpType.MakeFunctionType(argsType, typeof<unit>)
-                    ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
-                        .WithMember(argsType)
-                        .WithMemberDelayed(fun () ->
-                            ProvidedMethod("Run", [ProvidedParameter("function", runCallbackType)], typeof<unit>,
-                                IsStaticMethod = true,
-                                InvokeCode = fun [fn] ->
-                                    <@@ Inlines.Require requires (%%fn) @@> @?> typeof<unit>)
-                        )
+                    let t = ctx.ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
+                    t.AddMember(argsType)
+                    t.AddMemberDelayed(fun () ->
+                        ctx.ProvidedMethod("Run", [ctx.ProvidedParameter("function", runCallbackType)], typeof<unit>,
+                            isStatic = true,
+                            invokeCode = fun [fn] ->
+                                <@@ Inlines.Require requires (%%fn) @@> @?> typeof<unit>)
+                    )
+                    t
                 | _ -> failwith "Unexpected parameter values")
         
         xhtmlTy.DefineStaticParameters(
-            [ProvidedStaticParameter("pathOrXml", typeof<string>)],
+            [ctx.ProvidedStaticParameter("pathOrXml", typeof<string>)],
             fun typename pars ->
                 match pars with
                 | [| :? string as pathOrXml |] ->
-                    let ty = ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
+                    let ty = ctx.ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
 
                     let xml =
                         if pathOrXml.Contains("<") then
@@ -224,29 +217,26 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                         )
                         @?> typeof<seq<string * obj>>
 
-                    ty.AddMember <| ProvidedConstructor([ ProvidedParameter("byId", byIdTy) ]
-                    ,   InvokeCode = fun [ byId ] -> <@@ New %%(widgetQueries byId) @@> @?> ty
+                    ty.AddMember <| ctx.ProvidedConstructor([ ctx.ProvidedParameter("byId", byIdTy) ],
+                        fun [ byId ] -> <@@ New %%(widgetQueries byId) @@> @?> ty
                     )
                     
                     ty.AddMembers (
                         widgets |> List.map (fun (i, t) ->
                             let t = findDojoClass t
-                            ProvidedProperty(i, t
-                            ,   GetterCode = fun [ this ] -> <@@ GetField %%(this @?> objTy) i @@> @?> t
-                            )
+                            ctx.ProvidedProperty(i, t, fun [ this ] -> <@@ GetField %%(this @?> objTy) i @@> @?> t)
                         )
                     )
 
-                    let jqTy = ProvidedTypeDefinition("JQuery", None)
+                    let jqTy = ctx.ProvidedTypeDefinition("JQuery", None)
 
                     ty.AddMember jqTy
 
                     jqTy.AddMembers (
                         ids |> List.map (fun (i, _) ->
                             let hi = "#" + i
-                            ProvidedProperty(i, typeof<JQuery.JQuery>, IsStatic = true
-                            ,   GetterCode = fun [] -> <@@ JQuery.JQuery.Of hi @@>    
-                            )
+                            ctx.ProvidedProperty(i, typeof<JQuery.JQuery>, IsStatic = true,
+                                getterCode = fun [] -> <@@ JQuery.JQuery.Of hi @@>)
                         )
                     )
 

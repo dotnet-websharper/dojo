@@ -6,4 +6,10 @@
 ^packages/
 ^tools/packages/
 \.suo$
+.vs/
 ^.temp/
+ProvidedTypes.fs
+ProvidedTypes.fsi
+AssemblyReader.fs
+AssemblyReaderReflection.fs
+ProvidedTypesContext.fs

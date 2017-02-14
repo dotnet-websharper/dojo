@@ -5,7 +5,7 @@ open WebSharper
 [<AutoOpen>]
 module Pervasives =
     let fail msg =
-        let k s = eprintfn "%s" s; failwith s
+        let k s = eprintfn "Error: %s" s; failwith s
         Printf.kprintf k msg
 
 module List =

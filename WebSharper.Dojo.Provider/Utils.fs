@@ -30,13 +30,3 @@ module Option =
         match optionFrom with
         | Some _ -> optionFrom
         | _ -> optionTo
-
-open WebSharper.Dojo.ProvidedTypes
-
-type ProvidedTypeDefinition with
-
-    member this.WithMember(mi) = this.AddMember(mi); this
-
-    member this.WithMemberDelayed(mi) = this.AddMemberDelayed(mi); this
-
-    member this.WithMembers(mi) = this.AddMembers(mi); this
