@@ -1,10 +1,10 @@
-﻿#load "tools/includes.fsx"
+#load "tools/includes.fsx"
 
 open IntelliFactory.Build
 
 let bt =
     BuildTool().PackageId("WebSharper.Dojo")
-        .VersionFrom("WebSharper")
+        .VersionFrom("WebSharper", versionSpec = "(,4.0)")
         .WithFSharpVersion(FSharpVersion.FSharp30)
         .WithFramework(fun fw -> fw.Net40)
 
@@ -46,7 +46,7 @@ let tests =
             [
                 r.Project library
                 r.Project typeProvider
-                r.NuGet("WebSharper.Html").Reference()
+                r.NuGet("WebSharper.Html").Version("(,4.0)").Reference()
             ])
 
 bt.Solution [

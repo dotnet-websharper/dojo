@@ -1,15 +1,15 @@
-﻿#load "tools/includes.fsx"
+#load "tools/includes.fsx"
 
 open IntelliFactory.Build
 
 let bt =
-    BuildTool().PackageId("Zafir.Dojo")
-        .VersionFrom("Zafir")
+    BuildTool().PackageId("WebSharper.Dojo")
+        .VersionFrom("WebSharper")
         .WithFSharpVersion(FSharpVersion.FSharp30)
         .WithFramework(fun fw -> fw.Net40)
 
 let library =
-    bt.Zafir.Extension("WebSharper.Dojo")
+    bt.WebSharper4.Extension("WebSharper.Dojo")
         .SourcesFromProject()
         .Embed(["dojo-config.js"])
 
@@ -30,7 +30,7 @@ do
         )
 
 let typeProvider =
-    bt.Zafir.Library("WebSharper.Dojo.Provider")
+    bt.WebSharper4.Library("WebSharper.Dojo.Provider")
         .SourcesFromProject()
         .References(fun r ->
             [
@@ -40,13 +40,13 @@ let typeProvider =
             ])
 
 let tests =
-    bt.Zafir.HtmlWebsite("WebSharper.Dojo.Tests")
+    bt.WebSharper4.HtmlWebsite("WebSharper.Dojo.Tests")
         .SourcesFromProject()
         .References(fun r ->
             [
                 r.Project library
                 r.Project typeProvider
-                r.NuGet("Zafir.Html").Latest(true).ForceFoundVersion().Reference()
+                r.NuGet("WebSharper.Html").Latest(true).ForceFoundVersion().Reference()
             ])
 
 bt.Solution [
@@ -61,7 +61,7 @@ bt.Solution [
         .Configure(fun c ->
             { c with
                 Authors = ["IntelliFactory"]
-                Title = Some "Zafir.Dojo"
+                Title = Some "WebSharper.Dojo"
             }
         )
 ]
