@@ -1,7 +1,7 @@
 ^dojo-release-.*/
 ^js-doc-parse-master/
 ^js-doc-parse/
-(bin|obj)/(Debug|Release)
+(bin|obj)/
 ^build/
 ^packages/
 ^tools/packages/

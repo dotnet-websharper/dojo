@@ -11,9 +11,6 @@
   <ItemGroup>
     <Compile Include="ProvidedTypes.fsi" />
     <Compile Include="ProvidedTypes.fs" />
-    <Compile Include="AssemblyReader.fs" />
-    <Compile Include="AssemblyReaderReflection.fs" />
-    <Compile Include="ProvidedTypesContext.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Provider.fs" />
   </ItemGroup>
