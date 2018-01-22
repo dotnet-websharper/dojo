@@ -1,35 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>ef4a245f-14f1-418a-ab92-e9658ddbee72</ProjectGuid>
-    <Name>WebSharper.Dojo.Provider</Name>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <WebSharperProject>Library</WebSharperProject>
-    <OutputPath>../build/net40</OutputPath>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <OutputType>Library</OutputType>
+    <WebSharperSourceMap>false</WebSharperSourceMap>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- CopyLocalLockFileAssemblies is necessary because the type provider needs WS.JavaScript next to it -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ProvidedTypes.fsi" />
-    <Compile Include="ProvidedTypes.fs" />
+    <Compile Include="../paket-files/fsprojects/FSharp.TypeProviders.SDK/src/ProvidedTypes.fsi" />
+    <Compile Include="../paket-files/fsprojects/FSharp.TypeProviders.SDK/src/ProvidedTypes.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Provider.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <ProjectReference Include="../WebSharper.Dojo\WebSharper.Dojo.fsproj" />
   </ItemGroup>
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '11.0'">
-      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets')">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-  <Import Project="$(FSharpTargetsPath)" />
-  <Import Project="../build/net40/$(Name).proj" />
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

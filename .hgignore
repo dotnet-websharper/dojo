@@ -13,3 +13,6 @@ ProvidedTypes.fsi
 AssemblyReader.fs
 AssemblyReaderReflection.fs
 ProvidedTypesContext.fs
+^.fake/
+^paket-files/
+^.vscode/
