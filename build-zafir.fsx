@@ -22,7 +22,7 @@ do
         |]
     for f in files do
         wc.DownloadFile(
-            "https://raw.githubusercontent.com/Jand42/FSharp.TypeProviders.Sdk/master/src/" + f,
+            "https://raw.githubusercontent.com/fsprojects/FSharp.TypeProviders.Sdk/master/src/" + f,
             System.IO.Path.Combine(__SOURCE_DIRECTORY__, "WebSharper.Dojo.Provider", f)
         )
 
