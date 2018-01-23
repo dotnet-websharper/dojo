@@ -16,4 +16,4 @@ ProvidedTypesContext.fs
 ^.fake/
 ^paket-files/
 ^.vscode/
-nuget/*.paket.template
+^nuget/.*\.paket\.template
