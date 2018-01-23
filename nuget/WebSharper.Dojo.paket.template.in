@@ -16,5 +16,5 @@ files
     ../WebSharper.Dojo.Provider/bin/Release/netstandard2.0/WebSharper.Dojo.Provider.dll ==> lib/netstandard2.0
     ../WebSharper.Dojo.Provider/bin/Release/netstandard2.0/WebSharper.Dojo.Provider.xml ==> lib/netstandard2.0
 dependencies
-        WebSharper LOCKEDVERSION
+        WebSharper ~> LOCKEDVERSION/3
         System.Xml.XDocument ~> 4.3
