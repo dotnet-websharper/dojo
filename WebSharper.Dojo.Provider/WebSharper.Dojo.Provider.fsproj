@@ -4,6 +4,7 @@
     <WebSharperProject>Library</WebSharperProject>
     <WebSharperSourceMap>false</WebSharperSourceMap>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <!-- CopyLocalLockFileAssemblies is necessary because the type provider needs WS.JavaScript next to it -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>

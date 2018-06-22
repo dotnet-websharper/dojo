@@ -4,6 +4,10 @@
     <WebSharperProject>Html</WebSharperProject>
     <WebSharperSourceMap>false</WebSharperSourceMap>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <WebSharperHtmlDirectory>../build/$(TargetFramework)/html</WebSharperHtmlDirectory>
+    <!-- <FscToolPath>c:\Users\tarmil\Source\Repos\TestCustomCompilerTP\myfsc\bin\Debug\netcoreapp2.1</FscToolPath> -->
+    <!-- <FscToolExe>fsc.cmd</FscToolExe> -->
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Samples.fs" />

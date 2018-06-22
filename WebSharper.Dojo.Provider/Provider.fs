@@ -134,7 +134,7 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                                     let n = uncapitalize p.Name
                                                     <@@ Inlines.TupleInvokeGet (%%this) i n @@> @?> ``type``))
                                             |> List.ofSeq
-                                        let t = ProvidedTypeDefinition(require, None)
+                                        let t = ProvidedTypeDefinition(require, Some typeof<obj>)
                                         t.AddMembers(ms)
                                         t.AddMembers(ps)
                                         let m = ProvidedProperty(require, t, fun [this] -> this @?> ``type``)
@@ -145,18 +145,27 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                                     yield! Seq.cast<MemberInfo> methods
                                     yield! Seq.cast<MemberInfo> extraMethods
                                 ])
-                        let argsType = ProvidedTypeDefinition("Requires", None)
+                        let argsType = ProvidedTypeDefinition("Requires", Some typeof<obj>)
                         for membs in members do
                             for m in membs do
                                 argsType.AddMember(m)
                         let runCallbackType = FSharpType.MakeFunctionType(argsType, typeof<unit>)
-                        let t = ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, None)
+                        let t = ProvidedTypeDefinition(thisAssembly, rootNamespace, typename, Some typeof<obj>)
                         t.AddMember(argsType)
                         t.AddMemberDelayed(fun () ->
                             ProvidedMethod("Run", [ProvidedParameter("function", runCallbackType)], typeof<unit>,
                                 isStatic = true,
                                 invokeCode = fun [fn] ->
-                                    <@@ Inlines.Require requires (%%fn) @@> @?> typeof<unit>)
+                                    // This is AMD.Require, but using it directly causes an F# compiler bug on netcore:
+                                    // error FS1108: The type 'Void' is required here and is unavailable.
+                                    // You must add a reference to assembly 'System.Private.CoreLib, Version=4.0.0.0,
+                                    // Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+                                    <@@ JS.Inline(
+                                            "$global.require($0, $wsruntime.CreateFuncWithArgs(function(x){return $1(x.length==1?x[0]:x)}))",
+                                            requires, (%%fn : obj -> unit)
+                                        ) @@>
+                                    // <@@ Inlines.Require requires %%fn @@>
+                                )
                         )
                         t
                     )
@@ -253,6 +262,16 @@ type DojoToolkitProvider(cfg: TypeProviderConfig) as this =
                 | _ -> failwith "Unexpected parameter values")
         
         this.AddNamespace(rootNamespace, [ requireTy; xhtmlTy ])
+
+    override this.ResolveAssembly(args) =
+        let name = AssemblyName(args.Name).Name.ToLowerInvariant()
+        let an =
+            cfg.ReferencedAssemblies
+            |> Seq.tryFind (fun an ->
+                Path.GetFileNameWithoutExtension(an).ToLowerInvariant() = name)
+        match an with
+        | Some f -> Assembly.LoadFrom f
+        | None -> null
 
 [<TypeProviderAssembly>]
 do ()
