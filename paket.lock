@@ -56,7 +56,7 @@ NUGET
     System.Runtime (4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81))
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.5) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.2) (< win8) (< wp8)) (&& (< monoandroid) (< net45) (>= netstandard1.2) (< netstandard1.3) (< win8) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.3) (< netstandard1.5) (< win8) (< wpa81))
       Microsoft.NETCore.Targets (>= 1.1) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.5) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.2) (< win8) (< wp8)) (&& (< monoandroid) (< net45) (>= netstandard1.2) (< netstandard1.3) (< win8) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.3) (< netstandard1.5) (< win8) (< wpa81))
-    System.Runtime.CompilerServices.Unsafe (4.5.1) - restriction: || (&& (>= dnxcore50) (>= net45)) (&& (>= dnxcore50) (>= netstandard1.0)) (&& (>= dnxcore50) (>= netstandard2.0)) (&& (>= dnxcore50) (>= portable-net45+win8+wp8+wpa81)) (&& (>= dnxcore50) (>= win8)) (&& (>= dnxcore50) (>= wp8)) (&& (>= dnxcore50) (>= wpa81)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< netstandard2.0) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< netstandard1.0) (>= netstandard1.3) (< win8)) (&& (< net45) (< netcoreapp2.1) (>= netstandard2.0) (< win8) (< wpa81)) (&& (>= netstandard1.3) (>= wp8))
+    System.Runtime.CompilerServices.Unsafe (4.5.2) - restriction: || (&& (>= dnxcore50) (>= net45)) (&& (>= dnxcore50) (>= netstandard1.0)) (&& (>= dnxcore50) (>= netstandard2.0)) (&& (>= dnxcore50) (>= portable-net45+win8+wp8+wpa81)) (&& (>= dnxcore50) (>= win8)) (&& (>= dnxcore50) (>= wp8)) (&& (>= dnxcore50) (>= wpa81)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< netstandard2.0) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< netstandard1.0) (>= netstandard1.3) (< win8)) (&& (< net45) (< netcoreapp2.1) (>= netstandard2.0) (< win8) (< wpa81)) (&& (>= netstandard1.3) (>= wp8))
       System.Runtime (>= 4.3) - restriction: && (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)
     System.Runtime.Extensions (4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (< netcoreapp1.1) (>= netstandard1.6) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.5) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.3) (< netstandard1.5) (< win8) (< wpa81))
@@ -131,16 +131,16 @@ NUGET
       System.Threading (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
       System.Xml.ReaderWriter (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81))
   remote: https://daily.websharper.com/nuget
-    WebSharper (4.5.2.308)
-    WebSharper.FSharp (4.5.2.308)
-      WebSharper (4.5.2.308)
-    WebSharper.Html (4.5.0.146)
+    WebSharper (4.5.4.317)
+    WebSharper.FSharp (4.5.4.317)
+      WebSharper (4.5.4.317)
+    WebSharper.Html (4.5.1.149)
       IntelliFactory.Xml (>= 0.6.64 < 0.7)
-      WebSharper (>= 4.5.2 < 4.6)
+      WebSharper (>= 4.5.4 < 4.6)
 GITHUB
   remote: fsprojects/FSharp.TypeProviders.SDK
-    src/ProvidedTypes.fs (6d90bfc8a6385ba2ab0319d4c08620aafc207803)
-    src/ProvidedTypes.fsi (6d90bfc8a6385ba2ab0319d4c08620aafc207803)
+    src/ProvidedTypes.fs (7d57cd409d7299592822713195924e42b2b7acde)
+    src/ProvidedTypes.fsi (7d57cd409d7299592822713195924e42b2b7acde)
 GROUP build
 RESTRICTION: == net45
 NUGET
@@ -163,4 +163,4 @@ GROUP wsbuild
 
 GIT
   remote: https://github.com/dotnet-websharper/build-script
-     (ba0f9d10f68ae96f0784f07548863a3c0bb1ee6f)
+     (e000569985e43f3129ad07b2f559314d080cfa9e)
