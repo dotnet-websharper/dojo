@@ -131,16 +131,16 @@ NUGET
       System.Threading (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
       System.Xml.ReaderWriter (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81))
   remote: https://daily.websharper.com/nuget
-    WebSharper (4.5.4.317)
-    WebSharper.FSharp (4.5.4.317)
-      WebSharper (4.5.4.317)
-    WebSharper.Html (4.5.1.149)
+    WebSharper (4.5.5.319)
+    WebSharper.FSharp (4.5.5.319)
+      WebSharper (4.5.5.319)
+    WebSharper.Html (4.5.1.150)
       IntelliFactory.Xml (>= 0.6.64 < 0.7)
-      WebSharper (>= 4.5.4 < 4.6)
+      WebSharper (>= 4.5.5 < 4.6)
 GITHUB
   remote: fsprojects/FSharp.TypeProviders.SDK
-    src/ProvidedTypes.fs (7d57cd409d7299592822713195924e42b2b7acde)
-    src/ProvidedTypes.fsi (7d57cd409d7299592822713195924e42b2b7acde)
+    src/ProvidedTypes.fs (4a4eab29074e7c7db91d60f2abbd2ab4e9d8b499)
+    src/ProvidedTypes.fsi (4a4eab29074e7c7db91d60f2abbd2ab4e9d8b499)
 GROUP build
 RESTRICTION: == net45
 NUGET
@@ -163,4 +163,4 @@ GROUP wsbuild
 
 GIT
   remote: https://github.com/dotnet-websharper/build-script
-     (e000569985e43f3129ad07b2f559314d080cfa9e)
+     (b55fa7868cffa5dd74ac8bc13b053567f7991add)
