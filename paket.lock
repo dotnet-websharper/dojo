@@ -474,11 +474,11 @@ NUGET
       System.Threading (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
       System.Xml.ReaderWriter (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81))
   remote: https://daily.websharper.com/nuget
-    WebSharper (4.5.8.325)
-      FSharp.Core (4.2.3)
-    WebSharper.FSharp (4.5.8.325)
-      WebSharper (4.5.8.325)
-    WebSharper.Html (4.5.1.152)
+    WebSharper (4.5.8.326)
+      FSharp.Core (>= 4.2.3)
+    WebSharper.FSharp (4.5.8.326)
+      WebSharper (4.5.8.326)
+    WebSharper.Html (4.5.1.153)
       IntelliFactory.Xml (>= 0.6.64 < 0.7)
       WebSharper (>= 4.5.8 < 4.6)
 GITHUB
