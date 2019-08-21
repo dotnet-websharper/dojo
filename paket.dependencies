@@ -7,8 +7,8 @@ nuget WebSharper prerelease
 nuget WebSharper.FSharp prerelease
 nuget WebSharper.Html prerelease
 nuget FSharp.Core 4.2.3 
-github fsprojects/FSharp.TypeProviders.SDK src/ProvidedTypes.fsi
-github fsprojects/FSharp.TypeProviders.SDK src/ProvidedTypes.fs
+github fsprojects/FSharp.TypeProviders.SDK:592d23a src/ProvidedTypes.fsi
+github fsprojects/FSharp.TypeProviders.SDK:592d23a src/ProvidedTypes.fs
 nuget System.Xml.XDocument
 
 group build
