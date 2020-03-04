@@ -1,0 +1,24 @@
+type file
+id WebSharper.Dojo
+authors
+    IntelliFactory
+owners
+    IntelliFactory
+
+
+description
+    WebSharper extension for Dojo Toolkit
+tags
+    Web JavaScript F# C#
+files
+    ../WebSharper.Dojo/bin/Release/net461/WebSharper.Dojo.dll ==> lib/net461
+    ../WebSharper.Dojo/bin/Release/net461/WebSharper.Dojo.xml ==> lib/net461
+    ../WebSharper.Dojo.Provider/bin/Release/net461/WebSharper.Dojo.Provider.dll ==> lib/net461
+    ../WebSharper.Dojo.Provider/bin/Release/net461/WebSharper.Dojo.Provider.xml ==> lib/net461
+    ../WebSharper.Dojo/bin/Release/netstandard2.0/WebSharper.Dojo.dll ==> lib/netstandard2.0
+    ../WebSharper.Dojo/bin/Release/netstandard2.0/WebSharper.Dojo.xml ==> lib/netstandard2.0
+    ../WebSharper.Dojo.Provider/bin/Release/netstandard2.0/WebSharper.Dojo.Provider.dll ==> lib/netstandard2.0
+    ../WebSharper.Dojo.Provider/bin/Release/netstandard2.0/WebSharper.Dojo.Provider.xml ==> lib/netstandard2.0
+dependencies
+        WebSharper ~> 4.6.1
+        System.Xml.XDocument ~> 4.3

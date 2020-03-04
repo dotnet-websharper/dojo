@@ -500,13 +500,13 @@ NUGET
       System.Threading (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
       System.Xml.ReaderWriter (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81))
   remote: https://daily.websharper.com/nuget
-    WebSharper (4.6.0.361)
+    WebSharper (4.6.1.381)
       FSharp.Core (>= 4.2.3)
-    WebSharper.FSharp (4.6.0.361)
-      WebSharper (4.6.0.361)
-    WebSharper.Html (4.6.0.166)
+    WebSharper.FSharp (4.6.1.381)
+      WebSharper (4.6.1.381)
+    WebSharper.Html (4.6.0.170)
       IntelliFactory.Xml (>= 0.6.64 < 0.7)
-      WebSharper (>= 4.6 < 4.7)
+      WebSharper (>= 4.6.1 < 4.7)
 GITHUB
   remote: fsprojects/FSharp.TypeProviders.SDK
     src/ProvidedTypes.fs (592d23a96db79b4248ed23a062db3a17433282ce)
@@ -517,11 +517,11 @@ NUGET
   remote: https://api.nuget.org/v3/index.json
     Chessie (0.6)
       FSharp.Core
-    FAKE (5.8.4)
-    FSharp.Compiler.Tools (10.2.1)
-    FSharp.Core (4.6.2)
-    Mono.Cecil (0.10.3)
-    Newtonsoft.Json (12.0.1)
+    FAKE (5.16)
+    FSharp.Compiler.Tools (10.2.3)
+    FSharp.Core (4.7)
+    Mono.Cecil (0.11.2)
+    Newtonsoft.Json (12.0.3)
     Paket.Core (5.173.1)
       Chessie (>= 0.6)
       FSharp.Compiler.Tools
@@ -533,4 +533,4 @@ GROUP wsbuild
 
 GIT
   remote: https://github.com/dotnet-websharper/build-script
-     (951f1db60fdbe057a5b96f0012dab0633922bb32)
+     (90eb54d1b2a21f568f22409b47814a7cf215900d)
