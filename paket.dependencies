@@ -2,10 +2,11 @@ source https://api.nuget.org/v3/index.json
 source https://daily.websharper.com/nuget
 source https://nuget.intellifactory.com/nuget username: "%IF_USER%" password: "%IF_PASS%"
 
-nuget WebSharper ~> 4.7
-nuget WebSharper.FSharp ~> 4.7
-nuget WebSharper.Html ~> 4.7
-nuget FSharp.Core 4.2.3 
+nuget WebSharper prerelease
+nuget WebSharper.FSharp prerelease
+nuget WebSharper.UI prerelease
+nuget WebSharper.AspNetCore prerelease
+nuget FSharp.Core 5.0.0
 github fsprojects/FSharp.TypeProviders.SDK:592d23a src/ProvidedTypes.fsi
 github fsprojects/FSharp.TypeProviders.SDK:592d23a src/ProvidedTypes.fs
 nuget System.Xml.XDocument
